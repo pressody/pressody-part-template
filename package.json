@@ -1,0 +1,39 @@
+{
+	"name": "pixelgradelt-part-template",
+	"version": "0.1.0",
+	"description": "Starter WP plugin template for the code attached to LT Parts.",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/pixelgradelt/pixelgradelt-part-template.git"
+	},
+	"author": {
+		"name": "Vlad Olaru",
+		"email": "vlad@pixelgrade.com",
+		"url": "https://pixelgrade.com/"
+	},
+	"license": "GPL-2.0+",
+	"bugs": {
+		"url": "https://github.com/pixelgradelt/pixelgradelt-part-template/issues"
+	},
+	"homepage": "https://github.com/pixelgradelt/pixelgradelt-part-template",
+	"devDependencies": {
+		"archiver": "^5.2.0",
+		"fs-extra": "^9.0.1",
+		"glob": "^7.1.6",
+		"minimist": "^1.2.5",
+		"node-wp-i18n": "^1.2.4"
+	},
+	"scripts": {
+		"makepot": "wpi18n makepot --poedit"
+	},
+	"distFiles": [
+		"pixelgradelt-part-template.php",
+		"README.md",
+		"{assets,languages,src,views}/**",
+		"vendor/autoload.php",
+		"vendor/composer/*.php",
+		"vendor/{cedaro/wp-plugin,psr/container}/src/**",
+		"vendor/psr/log/Psr/**",
+		"vendor/pimple/pimple/src/Pimple/!(Tests){*.php,**/*.php}"
+	]
+}
