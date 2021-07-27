@@ -1,13 +1,13 @@
 <?php
 /**
- * PixelgradeLT Part Template
+ * PixelgradeLT Part Template Title
  *
  * @package PixelgradeLT
  * @author  Vlad Olaru <vlad@pixelgrade.com>
  * @license GPL-2.0-or-later
  *
  * @wordpress-plugin
- * Plugin Name: PixelgradeLT Part Template
+ * Plugin Name: PixelgradeLT Part Template Title
  * Plugin URI: https://github.com/pixelgradelt/pixelgradelt-part-template
  * Description: Handles the custom integration for the PixelgradeLT Part.
  * Version: 0.1.0
