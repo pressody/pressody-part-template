@@ -1,0 +1,169 @@
+#!/usr/bin/env node
+
+const fs = require('fs')
+const replace = require('replace-in-file')
+
+// Get arguments
+let missingOrInvalidArguments = false
+const argv = require('minimist')(process.argv.slice(2), {
+	string: ['packageName', 'title', 'description', 'namespace', 'version']
+})
+
+if (!argv.packageName) {
+	console.warn('Provide --packageName="" representing the full Composer package name for this LT Part. The plugin slug and textdomain will be deduced from this.')
+	missingOrInvalidArguments = true
+} else {
+	// Taken from here https://getcomposer.org/schema.json
+	const composerPackageNamePattern = '^[a-z0-9]([_.-]?[a-z0-9]+)*/[a-z0-9](([_.]?|-{0,2})[a-z0-9]+)*$'
+	const regex = new RegExp(composerPackageNamePattern)
+	if (!regex.test(argv.packageName)) {
+		console.warn('The provided package name doesn\'t comply with the pattern required by Composer. You can test things here <https://regexr.com/5sr9h>')
+		missingOrInvalidArguments = true
+	}
+}
+
+if (!argv.namespace) {
+	console.log('Provide --namespace="" representing the base PHP namespace to use throughout the PHP code.')
+	missingOrInvalidArguments = true
+} else {
+	// Taken from here https://stackoverflow.com/a/60470526
+	const phpNamespacePattern = '^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff\\\\]*[a-zA-Z0-9_\x7f-\xff]$'
+	const regex = new RegExp(phpNamespacePattern)
+	if (!regex.test(argv.namespace)) {
+		console.warn('The provided namespace doesn\'t comply with the pattern required by PHP.')
+		missingOrInvalidArguments = true
+	}
+}
+
+if (!argv.title) {
+	console.warn('Provide --title="" representing the plugin name as displayed throughout the WordPress dashboard.')
+	missingOrInvalidArguments = true
+}
+
+if (!argv.description) {
+	console.warn('Provide --description="" representing the plugin description as displayed throughout the WordPress dashboard and the Composer package description.')
+	missingOrInvalidArguments = true
+}
+
+if (!argv.version) {
+	console.warn('Provide --version="" representing the starting version of the plugin. Keep it SemVer 2.0 compatible <https://semver.org/>')
+	missingOrInvalidArguments = true
+}
+
+// Bail on bad arguments.
+if (missingOrInvalidArguments) {
+	process.exit(1)
+}
+
+// LET'S GET TO WORK!
+
+// 0. Deduce stuff from provides stuff
+const pluginSlug = argv.packageName.split('/')[1].toLowerCase()
+const pluginTextDomain = pluginSlug.replace(/-/g, '_')
+let options = {}
+
+// 1. Replace in package.json
+options = {
+	files: [
+		'package.json',
+	],
+	from: [/"name": "[^"]+"/, /"version": "[^"]+"/, /"description": "[^"]+"/, /"pixelgradelt-part-template.php"/],
+	to: [`"name": "${pluginSlug}"`, `"version": "${argv.version}"`, `"description": "${argv.description}"`, `"${pluginSlug}.php"`],
+}
+// Replace also the URLs if we've been given a GitHub repo url (without the .git part).
+if (argv.githubURL) {
+	options.from.push(/https:\/\/github.com\/pixelgradelt\/pixelgradelt-part-template/g)
+	options.to.push(argv.githubURL)
+}
+console.log('1. "package.json" replacement results:', replace.sync(options))
+
+// 2. Replace in composer.json
+options = {
+	files: [
+		'composer.json',
+	],
+	from: [
+		/"name": "[^"]+"/,
+		/"version": "[^"]+"/,
+		/"description": "[^"]+"/,
+		/PixelgradeLT\\\\PartTemplate/, // The base PHP namespace.
+		/languages\/pixelgradelt-part-template\.pot/ // The Composer scripts section.
+	],
+	to: [
+		`"name": "${argv.packageName}"`,
+		`"version": "${argv.version}"`,
+		`"description": "${argv.description}"`,
+		`${argv.namespace.replace(/\\/g, "\\\\")}`, // The base PHP namespace.
+		`languages/${pluginSlug}.pot`
+	],
+}
+// Replace also the URLs if we've been given a GitHub repo url (without the .git part).
+if (argv.githubURL) {
+	options.from.push(/https:\/\/github.com\/pixelgradelt\/pixelgradelt-part-template/g)
+	options.to.push(argv.githubURL)
+}
+console.log('2. "composer.json" replacement results:', replace.sync(options))
+
+// 3. Replace in pixelgradelt-part-template.php
+options = {
+	files: [
+		'pixelgradelt-part-template.php',
+	],
+	from: [
+		/^ \* Version: .*$/gm,
+		/VERSION = '.+'/,
+		/^ \* Description: .*$/gm,
+		/^ \* Text Domain: .*$/gm,
+		/PixelgradeLT Part Template Title/g
+	],
+	to: [
+		` * Version: ${argv.version}`,
+		`VERSION = '${argv.version}'`,
+		` * Description: ${argv.description}`,
+		` * Text Domain: ${pluginTextDomain}`,
+		argv.title
+	],
+}
+// Replace also the URLs if we've been given a GitHub repo url (without the .git part).
+if (argv.githubURL) {
+	options.from.push(/https:\/\/github.com\/pixelgradelt\/pixelgradelt-part-template/g)
+	options.to.push(argv.githubURL)
+	options.from.push(/^ \* GitHub Plugin URI: pixelgradelt\/pixelgradelt-part-template/gm)
+	options.to.push(' * GitHub Plugin URI: ' + argv.githubURL.replace(/https:\/\/github.com\//, ''))
+}
+console.log('3. Main plugin file replacement results:', replace.sync(options))
+
+// 4. Rename pixelgradelt-part-template.php
+// fs.rename( 'pixelgradelt-part-template.php', pluginSlug+'.php', function(err) {
+// 	if ( err ) console.log('ERROR: ' + err);
+// });
+console.log('4. Renamed main plugin file to "' + pluginSlug + '.php".')
+
+// 5. Replace in all .php files
+options = {
+	files: [
+		'./**/*.php',
+	],
+	from: [
+		/@since .*$/gm,
+		/PixelgradeLT\\PartTemplate/, // the PHP namespaces
+		/^ \* Description: .*$/gm,
+		/^ \* Text Domain: .*$/gm,
+		/PixelgradeLT Part Template Title/g
+	],
+	to: [
+		`@since ${argv.version}`,
+		`${argv.namespace}`,
+		` * Description: ${argv.description}`,
+		` * Text Domain: ${pluginTextDomain}`,
+		argv.title
+	],
+}
+// Replace also the URLs if we've been given a GitHub repo url (without the .git part).
+if (argv.githubURL) {
+	options.from.push(/https:\/\/github.com\/pixelgradelt\/pixelgradelt-part-template/g)
+	options.to.push(argv.githubURL)
+	options.from.push(/^ \* GitHub Plugin URI: pixelgradelt\/pixelgradelt-part-template/gm)
+	options.to.push(' * GitHub Plugin URI: ' + argv.githubURL.replace(/https:\/\/github.com\//, ''))
+}
+// console.log('5. PHP files replacement results:', replace.sync(options))
