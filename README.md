@@ -1,14 +1,44 @@
 # PixelgradeLT Part Template
 
-Starter WP plugin template for the code attached to LT Parts.
+Starter WP plugin template for the code attached to LT Parts (companion LT Part plugin).
 
 ## About
 
 Use this as your starting point for coding the integration of an LT Part (managed by LT Records).
 
+## Developing a new PixelgradeLT Part plugin
+
+If you know what you are doing you can go any number of ways towards developing a companion LT Part plugin, even ignoring this template and starting fresh. But lets tackle the case when you want to stick to this template.
+
+This template's intention is to **speed up development and make it more error-proof.** By providing **a set of patterns** (like Dependency Injection, Loggers and Log Handlers, etc.), this template ensures you can easily and confidently bolt things together and have your logic behave predictably.
+
+### Step 1 - Create a new GitHub repo
+
+Each LT Part companion plugin should reside in **a separate Git repo,** most likely hosted on GitHub.com. 
+
+**The hard way** would be to:
+- create a new, empty GitHub repo yourself
+- open a terminal window into your development directory
+- clone _this_ repo locally by running `git clone --depth 1 https://github.com/pixelgradelt/pixelgradelt-part-template your-part-slug` (replace `your-part-slug` with the actual slug you intend to use)
+- `cd` into the newly created directory (`your-part-slug`)
+- change the remote URL to your new, empty GitHub repo by running `git remote set-url origin https://github.com/USERNAME/REPOSITORY.git` and verify the change with `git remote -v`
+- finally, push your "changes" to the GitHub repo by running `git push origin`.
+
+**The easy way** is to take advantage of the fact that **this GitHub repo is made available as a template** for creating other repos. So simply click the "Use this template" button and follow the instructions.
+
+![Use this repo as a template for a new GitHub repo](docs/images/use-as-template.png)
+
+After that, clone the new GitHub repo locally for development by running `git clone https://github.com/USERNAME/REPOSITORY.git your-part-slug`.
+
+Now you can start setting up your LT Part companion plugin, clean-up, and develop the specific logic.
+
+### Step 2 - Set up your PixelgradeLT Part plugin
+
+
+
 ## Development
 
-## Build
+### Building a new release
 
 Since this is ultimately a WordPress plugin, you wil need to **generate a cleaned-up .zip file when you wish to publish a new release.**
 
@@ -24,7 +54,7 @@ The `bin/archive` script will also generate a fresh `.pot` language file in the 
 
 **The resulting release file will be located in the `dist` directory,** in your plugin directory (it is ignored by Git).
 
-## Running Tests
+### Running Tests
 
 To run the PHPUnit tests, in the root directory of the plugin, run something like:
 
