@@ -12,12 +12,8 @@ declare ( strict_types=1 );
 namespace PixelgradeLT\PartTemplate;
 
 use Cedaro\WP\Plugin\Provider\I18n;
-use Env\Env;
 use Pimple\Container as PimpleContainer;
-use Pimple\Psr11\ServiceLocator;
-use Pimple\ServiceIterator;
 use Pimple\ServiceProviderInterface;
-use PixelgradeLT\PartTemplate\Exception\PixelgradeltPartTemplateException;
 use PixelgradeLT\PartTemplate\Logging\Handler\FileLogHandler;
 use PixelgradeLT\PartTemplate\Logging\Logger;
 use PixelgradeLT\PartTemplate\Logging\LogsManager;
@@ -55,7 +51,6 @@ class ServiceProvider implements ServiceProviderInterface {
 
 		$container['hooks.upgrade'] = function ( $container ) {
 			return new Provider\Upgrade(
-				$container['htaccess.handler'],
 				$container['logs.logger']
 			);
 		};

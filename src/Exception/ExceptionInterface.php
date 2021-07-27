@@ -16,6 +16,6 @@ namespace PixelgradeLT\PartTemplate\Exception;
  *
  * @since 0.1.0
  */
-interface PixelgradeltPartTemplateException {
+interface ExceptionInterface {
 
 }

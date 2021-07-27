@@ -19,7 +19,7 @@ use WP_Http as HTTP;
  *
  * @since 0.1.0
  */
-class HttpException extends \Exception implements PixelgradeltPartTemplateException {
+class HttpException extends \Exception implements ExceptionInterface {
 	/**
 	 * HTTP status code.
 	 *
