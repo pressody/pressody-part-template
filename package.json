@@ -20,10 +20,10 @@
 		"archiver": "^5.2.0",
 		"fs-extra": "^9.0.1",
 		"glob": "^7.1.6",
-		"minimist": "^1.2.5"
+		"minimist": "^1.2.5",
+		"replace-in-file": "^6.2.0"
 	},
-	"scripts": {
-	},
+	"scripts": {},
 	"distFiles": [
 		"pixelgradelt-part-template.php",
 		"README.md",
