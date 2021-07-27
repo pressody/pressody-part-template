@@ -1,5 +1,6 @@
 {
 	"name": "pixelgradelt/pixelgradelt-part-template",
+    "version": "0.1.0",
 	"description": "Starter WP plugin template for the code attached to LT Parts.",
 	"keywords": [
 		"pixelgradelt",
