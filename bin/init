@@ -59,15 +59,15 @@ function initialise() {
 	const pluginTitle = argv.title;
 	const pluginNamespace = argv.namespace;
 	let [pluginVendor, pluginName] = argv.packageName.split('/');
-	pluginName = pluginName.toLowerCase().replace(/[^\w\d]+/g, '-');
+	pluginName = pluginName.toLowerCase().replace(/[^a-z\d]+/g, '-');
 	let pluginPrefix = pluginName;
 	if ( pluginVendor.includes('pixelgradelt') ) {
 		pluginPrefix = 'pixelgradelt-' + pluginPrefix;
 	} else {
-		pluginPrefix = pluginVendor.toLowerCase().replace(/[\W\D]+/g, '-') + '-' + pluginPrefix;
+		pluginPrefix = pluginVendor.toLowerCase().replace(/[^a-z\d]+/g, '-') + '-' + pluginPrefix;
 	}
-	const pluginTextDomain = pluginPrefix.replace(/-/g, '_');
-	let pluginPrefixUnderscored = pluginPrefix.replace(/-/g, '_');
+	const pluginPrefixUnderscored = pluginPrefix.replace(/-/g, '_');
+	const pluginTextDomain = pluginPrefixUnderscored;
 
 	let options = {};
 
