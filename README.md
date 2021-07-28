@@ -15,9 +15,9 @@ This template's intention is to **speed up development and make it more error-pr
 ### Step 0 - Decide
 
 Before tackling repos and files, **you need to make some decisions:**
-1. **Decide on your LT Part Composer package name** as this will determine things like plugin directory, main file name, textdomain, etc. Usually you would use the
-
-
+1. **Decide on your LT Part Composer package name** as this will determine things like plugin directory, main file name, textdomain, etc. Usually you would use the `pixelgradelt-records` vendor and a LT part name prefixed with `part_` (e.g. a package name would look like this `pixelgradelt-records/part_woocommerce`).
+2. **Decide on the PHP base namespace to use.** We _strongly recommend_ you use a namespace like this `PixelgradeLT\PartWoocommerce` with `PixelgradeLT` as the root (with the exact lowercase and uppercase).
+3. Finally, decide on a LT Part title, description, and what version you want to start from (e.g. `0.0.1` or `1.0.0`).
 
 ### Step 1 - Create a new GitHub repo
 
@@ -53,8 +53,7 @@ Now that you have the files as provided by the template, it is time to adapt the
 - run the `./bin/init` script from the command line; use `./bin/init --help` to get all the explanations on how to use it
 - commit your file changes to your repo and you're good to go.
 
-### 
-
+Please note that the initialisation script can\'t decide for you. It just does the monkey-work. _You_ should cleanup this `README.md` of these instructions, decide what you want to keep in `/docs`, etc.
 
 ## Development
 
