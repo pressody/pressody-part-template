@@ -53,7 +53,13 @@ Now that you have the files as provided by the template, it is time to adapt the
 - run the `./bin/init` script from the command line; use `./bin/init --help` to get all the explanations on how to use it
 - commit your file changes to your repo and you're good to go.
 
-Please note that the initialisation script can\'t decide for you. It just does the monkey-work. _You_ should cleanup this `README.md` of these instructions, decide what you want to keep in `/docs`, etc.
+For extra help, here is a full command to start from:
+```shell
+./bin/init --packageName="pixelgradelt-records/part_woocommerce" --title="PixelgradeLT Part WooCommerce" --namespace="PixelgradeLT\PartWoocommerce" --description="This is a description." --version="0.5.0" --githubURL="https://github.com/ohoo/part-woocommerce" --dryRun
+```
+You should **keep the quotes** on arguments values to save you from the need to escape values like the namespace!
+
+Please note that the initialisation script can\'t decide for you. It just does the monkey-work in a thorough way. _You_ should cleanup this `README.md` of these instructions, decide what you want to keep in `/docs`, etc.
 
 ## Development
 

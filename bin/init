@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const fs = require('fs');
+const fsExtra = require('fs-extra');
 const chalk = require('chalk');
 const prompt = require('prompt');
 const replace = require('replace-in-file');
@@ -55,8 +56,10 @@ function validateArgs() {
 
 function initialise() {
 // 0. Deduce stuff from provided stuff
+	const pluginTitle = argv.title;
+	const pluginNamespace = argv.namespace;
 	let [pluginVendor, pluginName] = argv.packageName.split('/');
-	pluginName = pluginName.toLowerCase().replace(/[\W\D]+/g, '-');
+	pluginName = pluginName.toLowerCase().replace(/[^\w\d]+/g, '-');
 	let pluginPrefix = pluginName;
 	if ( pluginVendor.includes('pixelgradelt') ) {
 		pluginPrefix = 'pixelgradelt-' + pluginPrefix;
@@ -111,7 +114,7 @@ function initialise() {
 			`"name": "${argv.packageName}"`,
 			`"version": "${argv.version}"`,
 			`"description": "${argv.description}"`,
-			`${argv.namespace.replace(/\\/g, "\\\\")}`, // The base PHP namespace.
+			pluginNamespace.replace(/\\/g, '\\\\'), // The base PHP namespace with escaped separators.
 			`languages/${pluginName}.pot`
 		],
 	}
@@ -133,6 +136,7 @@ function initialise() {
 			/VERSION = '.+'/,
 			/^ \* Description: .*$/gm,
 			/^ \* Text Domain: .*$/gm,
+			/PixelgradeLT\\PartTemplate/, // The base PHP namespace.
 			/PixelgradeLT Part Template Title/g,
 			/pixelgradelt-part-template.php/g,
 			/'pixelgradelt-part-template'/g, // The slug
@@ -144,7 +148,8 @@ function initialise() {
 			`VERSION = '${argv.version}'`,
 			` * Description: ${argv.description}`,
 			` * Text Domain: ${pluginTextDomain}`,
-			argv.title,
+			pluginNamespace, // The base PHP namespace.
+			pluginTitle,
 			`${pluginName}.php`,
 			`'${pluginName}'`,
 			`\$${pluginPrefixUnderscored}`,
@@ -192,9 +197,9 @@ function initialise() {
 		],
 		to: [
 			`@since ${argv.version}`,
-			`${argv.namespace}`,
+			pluginNamespace,
 			`${argv.version}`,
-			argv.title
+			pluginTitle,
 			`${pluginName}.php`,
 			`${pluginName}/${pluginName}.php`,
 			`'${pluginTextDomain}'`,
@@ -216,9 +221,11 @@ function initialise() {
 			'./composer.lock', // No need to provide lock file.
 			'./languages/pixelgradelt-part-template.pot', // The translation file should be generated on release.
 		];
-		fs.remove('composer.lock', function (err) {
-			if (err) console.log('ERROR: ' + err);
-		});
+		toRemove.forEach( function( file ) {
+			fsExtra.remove(file, function (err) {
+				if (err) console.log('ERROR: ' + err);
+			});
+		})
 	}
 	console.log('6. Cleaned up some files to not let them get in your way.')
 
@@ -269,7 +276,7 @@ if ( ! dryRun ) {
 			confirm: {
 				// allow yes, no, y, n, YES, NO, Y, N as answer
 				pattern: /^(yes|no|y|n)$/gi,
-				description: 'Do you really want to initialise all the files as for a fresh LT Part?',
+				description: 'Do you really want to initialise all the files as for a fresh LT Part? (yes/no)',
 				message: 'Type yes/no',
 				required: true,
 				default: 'no'
@@ -294,5 +301,3 @@ if ( ! dryRun ) {
 	validateArgs();
 	initialise();
 }
-
-
