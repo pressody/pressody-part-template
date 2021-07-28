@@ -71,7 +71,7 @@ function initialise() {
 
 	let options = {};
 
-// 1. Replace in package.json
+	// 1. Replace in package.json
 	options = {
 		dry: dryRun,
 		files: [
@@ -90,14 +90,14 @@ function initialise() {
 			`"${pluginName}.php"`
 		],
 	}
-// Replace also the URLs if we've been given a GitHub repo url (without the .git part).
+	// Replace also the URLs if we've been given a GitHub repo url (without the .git part).
 	if (argv.githubURL) {
 		options.from.push(/https:\/\/github.com\/pixelgradelt\/pixelgradelt-part-template/g)
 		options.to.push(argv.githubURL)
 	}
 	console.log('1. "package.json" replacement results:', replace.sync(options))
 
-// 2. Replace in composer.json
+	// 2. Replace in composer.json
 	options = {
 		dry: dryRun,
 		files: [
@@ -118,14 +118,14 @@ function initialise() {
 			`languages/${pluginName}.pot`
 		],
 	}
-// Replace also the URLs if we've been given a GitHub repo url (without the .git part).
+	// Replace also the URLs if we've been given a GitHub repo url (without the .git part).
 	if (argv.githubURL) {
 		options.from.push(/https:\/\/github.com\/pixelgradelt\/pixelgradelt-part-template/g)
 		options.to.push(argv.githubURL)
 	}
 	console.log('2. "composer.json" replacement results:', replace.sync(options))
 
-// 3. Replace in pixelgradelt-part-template.php
+	// 3. Replace in pixelgradelt-part-template.php
 	options = {
 		dry: dryRun,
 		files: [
@@ -156,7 +156,7 @@ function initialise() {
 			`'${pluginPrefixUnderscored}`,
 		],
 	}
-// Replace also the URLs if we've been given a GitHub repo url (without the .git part).
+	// Replace also the URLs if we've been given a GitHub repo url (without the .git part).
 	if (argv.githubURL) {
 		options.from.push(/https:\/\/github.com\/pixelgradelt\/pixelgradelt-part-template/g)
 		options.to.push(argv.githubURL)
@@ -165,7 +165,7 @@ function initialise() {
 	}
 	console.log('3. Main plugin file replacement results:', replace.sync(options))
 
-// 4. Rename pixelgradelt-part-template.php
+	// 4. Rename pixelgradelt-part-template.php
 	if (!dryRun) {
 		fs.rename('pixelgradelt-part-template.php', pluginName + '.php', function (err) {
 			if (err) console.log('ERROR: ' + err);
@@ -173,7 +173,7 @@ function initialise() {
 	}
 	console.log('4. Renamed main plugin file to "' + pluginName + '.php".')
 
-// 5. Replace in all other files
+	// 5. Replace in all other files
 	options = {
 		dry: dryRun,
 		files: [
@@ -210,21 +210,21 @@ function initialise() {
 			`/${pluginPrefix}`,
 		],
 	}
-// Replace also the URLs if we've been given a GitHub repo url (without the .git part).
+	// Replace also the URLs if we've been given a GitHub repo url (without the .git part).
 	if (argv.githubURL) {
 		options.from.push(/https:\/\/github.com\/pixelgradelt\/pixelgradelt-part-template/g);
 		options.to.push(argv.githubURL);
 	}
 	console.log('5. Rest of the files replacement results:', replace.sync(options));
 
-// 6. Delete some files that should not be present, just in case.
+	// 6. Delete some files that should not be present, just in case.
 	if (!dryRun) {
 		const toRemove = [
 			'./composer.lock', // No need to provide lock file.
 			'./languages/pixelgradelt-part-template.pot', // The translation file should be generated on release.
 		];
 		toRemove.forEach( function( file ) {
-			fsExtra.remove(file, function (err) {
+			fsExtra.removeSync(file, function (err) {
 				if (err) console.log('ERROR: ' + err);
 			});
 		})
@@ -233,6 +233,114 @@ function initialise() {
 
 	console.log('');
 	console.log(chalk.green('Done! ' + chalk.bold('Commit the new changes to your Git repo') + ' and get developing.'));
+}
+
+function extremeDietProgram() {
+	if (!dryRun) {
+		console.log('Started the extreme diet program.')
+		const toRemove = [
+			'./.github',
+			'./assets',
+			'./docs',
+			'./tests',
+			'./views',
+			'./.jshintrc',
+			'./.phpcs.xml.dist',
+			'./phpunit.xml.dist',
+			'./src/Exception',
+			'./src/Logging',
+			'./src/Provider',
+			'./src/Screen',
+			'./src/Utils',
+		];
+		toRemove.forEach( function( file ) {
+			fsExtra.removeSync(file, function (err) {
+				if (err) console.log('ERROR: ' + err);
+				console.log('Deleted '+file);
+			});
+		})
+
+		// Edit files
+		let [pluginVendor, pluginName] = argv.packageName.split('/');
+		pluginName = pluginName.toLowerCase().replace(/[^a-z\d]+/g, '-');
+
+		// Remove activation and deactivation hooks calls from the main plugin file.
+		options = {
+			files: [`./${pluginName}.php`,],
+			from: [
+				/->register_hooks\(.*'hooks.activation'.*$/m,
+				/->register_hooks\(.*'hooks.deactivation'.*;$/m,
+			],
+			to: [
+				'',
+				';'
+			],
+		}
+		console.log('Edited the main plugin file:', replace.sync(options));
+
+		// Remove register_hooks from Plugin.
+		options = {
+			files: [`./src/Plugin.php`,],
+			from: [
+				/->register_hooks\(.*'logs.manager'.*;$/m,
+				/if \( is_admin\(\) \) {[^}]*}/,
+			],
+			to: [
+				';',
+				'',
+			],
+		}
+		console.log('Edited the src/Plugin.php file:', replace.sync(options));
+
+		// Remove service providers from ServiceProvider.
+		options = {
+			files: [`./src/ServiceProvider.php`,],
+			from: [
+				/\$container\['hooks\.activation'\] = function \(.*\) {[^}]*};/m,
+				/\$container\['hooks\.admin_assets'\] = function \(.*\) {[^}]*};/m,
+				/\$container\['hooks\.deactivation'\] = function \(.*\) {[^}]*};/m,
+				/\$container\['hooks\.upgrade'\] = function \(.*\) {[^}]*};/m,
+				/\$container\['logs\.logger'\] = function \(.*\) {[^}]*};/m,
+				/\$container\['logs\.handlers\.file'\] = function \(.*\) {[^}]*};/m,
+				/\$container\['logs\.manager'\] = function \(.*\) {[^}]*};/m,
+			],
+			to: [
+				'',
+				'',
+				'',
+				'',
+				'',
+				'',
+				'',
+			],
+		}
+		console.log('Edited the src/Plugin.php file:', replace.sync(options));
+
+		// Strip down composer.json
+		const composerJson = require('../composer.json');
+		delete composerJson.require['automattic/jetpack-constants'];
+		delete composerJson.require['psr/log'];
+		delete composerJson['autoload-dev'];
+		delete composerJson.scripts['install-codestandards'];
+		delete composerJson.scripts.phpcs;
+		delete composerJson.scripts.tests;
+		delete composerJson.scripts['tests-unit'];
+		delete composerJson.scripts['tests-integration'];
+		fs.writeFileSync('../composer.json', JSON.stringify(composerJson, null, 4));
+		console.log('Slimmed "composer.json".')
+
+		console.log('The extreme diet program has been applied. You now have just the bare-minimum.')
+	} else {
+		console.log('Skipping the extreme diet program in --dryRun mode.')
+	}
+}
+
+function run() {
+	validateArgs();
+	initialise();
+	if ( bareBones ) {
+		extremeDietProgram();
+	}
 }
 
 // Get arguments
@@ -252,13 +360,15 @@ if ( !!argv.help ) {
 	console.log( chalk.blue('--description')+'           '+chalk.red('Required. ')+'The plugin description as displayed throughout the WordPress dashboard and the Composer package description.');
 	console.log( chalk.blue('--version')+'               '+chalk.red('Required. ')+'The starting version of the plugin. Keep it SemVer 2.0 compatible <https://semver.org/>.');
 	console.log( chalk.blue('--githubURL')+'             The GitHub repo URL of this LT Part (without the .git part). Just a simple HTTPS URL.');
-	console.log( chalk.blue('--dryRun')+'                Don\'t do any actual changes, just simulate.');
+	console.log( chalk.blue('--bareBones')+'             Delete most of the files to reach a very bare-bones state. Useful for companion plugins that don\'t do anything because there is no need to.');
+	console.log( chalk.blue('--dryRun')+'                Don\'t do any actual changes, just simulate. Will not run --bareBones, if present, in --dryRun mode.');
 	console.log( chalk.blue('--help')+'                  Display these helpful details.');
 
 	process.exit(0);
 }
 
 const dryRun = !!argv.dryRun || !!argv.dry;
+const bareBones = !!argv.bareBones || !!argv.bare;
 
 if ( ! dryRun ) {
 
@@ -295,11 +405,9 @@ if ( ! dryRun ) {
 		}
 
 		// Action confirmed. Carry on.
-
-		validateArgs();
-		initialise();
+		run();
 	});
 } else {
-	validateArgs();
-	initialise();
+	// Run without confirmation since we are dry-running.
+	run();
 }

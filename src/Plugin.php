@@ -46,8 +46,7 @@ class Plugin extends BasePlugin implements Composable {
 		if ( is_admin() ) {
 			$this
 				->register_hooks( $container->get( 'hooks.upgrade' ) )
-				->register_hooks( $container->get( 'hooks.admin_assets' ) )
-				->register_hooks( $container->get( 'screen.settings' ) );
+				->register_hooks( $container->get( 'hooks.admin_assets' ) );
 		}
 
 		/**
