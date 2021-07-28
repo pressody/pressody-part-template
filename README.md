@@ -68,6 +68,8 @@ You should **keep the quotes** on arguments values to save you from the need to 
 
 Please note that the initialisation script can\'t decide for you. It just does the monkey-work in a thorough way. _You_ should cleanup this `README.md` of these instructions, decide what you want to keep in `/docs`, etc.
 
+If you are after **a bare-bones LT Part companion plugin** (one that does nothing), just add the `--bareBones` argument to the command above.
+
 ## Development
 
 ### Building a new release
