@@ -238,7 +238,7 @@ function initialise() {
 function extremeDietProgram() {
 	if (!dryRun) {
 		console.log('---');
-		console.log('Starting the extreme diet program.');
+		console.log('Starting the extreme diet program..');
 
 		// Edit files
 		let [pluginVendor, pluginName] = argv.packageName.split('/');
@@ -309,7 +309,7 @@ function extremeDietProgram() {
 		console.log('Edited the src/Plugin.php file:', replace.sync(options));
 
 		// Strip down composer.json
-		const composerJson = require('../composer.json');
+		let composerJson = JSON.parse(fs.readFileSync('./composer.json', 'utf8'));
 		delete composerJson.require['automattic/jetpack-constants'];
 		delete composerJson.require['psr/log'];
 		delete composerJson['autoload-dev'];
@@ -318,8 +318,8 @@ function extremeDietProgram() {
 		delete composerJson.scripts.tests;
 		delete composerJson.scripts['tests-unit'];
 		delete composerJson.scripts['tests-integration'];
-		fs.writeFileSync('../composer.json', JSON.stringify(composerJson, null, 4));
-		console.log('Slimmed "composer.json".')
+		fsExtra.writeJsonSync('./composer.json', composerJson, {spaces: 4});
+		console.log('Slimmed down "composer.json".');
 
 		// Remove files and folders.
 		const toRemove = [
