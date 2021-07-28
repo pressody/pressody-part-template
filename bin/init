@@ -1,169 +1,266 @@
 #!/usr/bin/env node
 
-const fs = require('fs')
-const replace = require('replace-in-file')
+const fs = require('fs');
+const chalk = require('chalk');
+const prompt = require('prompt');
+const replace = require('replace-in-file');
 
-// Get arguments
-let missingOrInvalidArguments = false
-const argv = require('minimist')(process.argv.slice(2), {
-	string: ['packageName', 'title', 'description', 'namespace', 'version']
-})
+function validateArgs() {
+	if (!argv.packageName) {
+		console.warn('Provide --packageName="" representing the full Composer package name for this LT Part. The plugin slug and textdomain will be deduced from this.')
+		missingOrInvalidArguments = true
+	} else {
+		// Taken from here https://getcomposer.org/schema.json
+		const composerPackageNamePattern = '^[a-z0-9]([_.-]?[a-z0-9]+)*/[a-z0-9](([_.]?|-{0,2})[a-z0-9]+)*$'
+		const regex = new RegExp(composerPackageNamePattern)
+		if (!regex.test(argv.packageName)) {
+			console.warn('The provided package name doesn\'t comply with the pattern required by Composer. You can test things here <https://regexr.com/5sr9h>')
+			missingOrInvalidArguments = true
+		}
+	}
 
-if (!argv.packageName) {
-	console.warn('Provide --packageName="" representing the full Composer package name for this LT Part. The plugin slug and textdomain will be deduced from this.')
-	missingOrInvalidArguments = true
-} else {
-	// Taken from here https://getcomposer.org/schema.json
-	const composerPackageNamePattern = '^[a-z0-9]([_.-]?[a-z0-9]+)*/[a-z0-9](([_.]?|-{0,2})[a-z0-9]+)*$'
-	const regex = new RegExp(composerPackageNamePattern)
-	if (!regex.test(argv.packageName)) {
-		console.warn('The provided package name doesn\'t comply with the pattern required by Composer. You can test things here <https://regexr.com/5sr9h>')
+	if (!argv.namespace) {
+		console.log('Provide --namespace="" representing the base PHP namespace to use throughout the PHP code.')
+		missingOrInvalidArguments = true
+	} else {
+		// Taken from here https://stackoverflow.com/a/60470526
+		const phpNamespacePattern = '^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff\\\\]*[a-zA-Z0-9_\x7f-\xff]$'
+		const regex = new RegExp(phpNamespacePattern)
+		if (!regex.test(argv.namespace)) {
+			console.warn('The provided namespace doesn\'t comply with the pattern required by PHP.')
+			missingOrInvalidArguments = true
+		}
+	}
+
+	if (!argv.title) {
+		console.warn('Provide --title="" representing the plugin name as displayed throughout the WordPress dashboard.')
 		missingOrInvalidArguments = true
 	}
-}
 
-if (!argv.namespace) {
-	console.log('Provide --namespace="" representing the base PHP namespace to use throughout the PHP code.')
-	missingOrInvalidArguments = true
-} else {
-	// Taken from here https://stackoverflow.com/a/60470526
-	const phpNamespacePattern = '^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff\\\\]*[a-zA-Z0-9_\x7f-\xff]$'
-	const regex = new RegExp(phpNamespacePattern)
-	if (!regex.test(argv.namespace)) {
-		console.warn('The provided namespace doesn\'t comply with the pattern required by PHP.')
+	if (!argv.description) {
+		console.warn('Provide --description="" representing the plugin description as displayed throughout the WordPress dashboard and the Composer package description.')
 		missingOrInvalidArguments = true
 	}
-}
 
-if (!argv.title) {
-	console.warn('Provide --title="" representing the plugin name as displayed throughout the WordPress dashboard.')
-	missingOrInvalidArguments = true
-}
-
-if (!argv.description) {
-	console.warn('Provide --description="" representing the plugin description as displayed throughout the WordPress dashboard and the Composer package description.')
-	missingOrInvalidArguments = true
-}
-
-if (!argv.version) {
-	console.warn('Provide --version="" representing the starting version of the plugin. Keep it SemVer 2.0 compatible <https://semver.org/>')
-	missingOrInvalidArguments = true
-}
+	if (!argv.version) {
+		console.warn("Provide --version=\"\" representing the starting version of the plugin. Keep it SemVer 2.0 compatible <https://semver.org/>")
+		missingOrInvalidArguments = true
+	}
 
 // Bail on bad arguments.
-if (missingOrInvalidArguments) {
-	process.exit(1)
+	if (missingOrInvalidArguments) {
+		process.exit(1)
+	}
 }
 
-// LET'S GET TO WORK!
-
-// 0. Deduce stuff from provides stuff
-const pluginSlug = argv.packageName.split('/')[1].toLowerCase()
-const pluginTextDomain = pluginSlug.replace(/-/g, '_')
-let options = {}
+function initialise() {
+// 0. Deduce stuff from provided stuff
+	const pluginSlug = argv.packageName.split('/')[1].toLowerCase().replace(/[\W\D]+/g, '-');
+	const pluginTextDomain = pluginSlug.replace(/-/g, '_');
+	const pluginSlugUnderscored = pluginSlug.replace(/-/g, '_');
+	let options = {};
 
 // 1. Replace in package.json
-options = {
-	files: [
-		'package.json',
-	],
-	from: [/"name": "[^"]+"/, /"version": "[^"]+"/, /"description": "[^"]+"/, /"pixelgradelt-part-template.php"/],
-	to: [`"name": "${pluginSlug}"`, `"version": "${argv.version}"`, `"description": "${argv.description}"`, `"${pluginSlug}.php"`],
-}
+	options = {
+		dry: dryRun,
+		files: [
+			'package.json',
+		],
+		from: [/"name": "[^"]+"/, /"version": "[^"]+"/, /"description": "[^"]+"/, /"pixelgradelt-part-template.php"/],
+		to: [`"name": "${pluginSlug}"`, `"version": "${argv.version}"`, `"description": "${argv.description}"`, `"${pluginSlug}.php"`],
+	}
 // Replace also the URLs if we've been given a GitHub repo url (without the .git part).
-if (argv.githubURL) {
-	options.from.push(/https:\/\/github.com\/pixelgradelt\/pixelgradelt-part-template/g)
-	options.to.push(argv.githubURL)
-}
-console.log('1. "package.json" replacement results:', replace.sync(options))
+	if (argv.githubURL) {
+		options.from.push(/https:\/\/github.com\/pixelgradelt\/pixelgradelt-part-template/g)
+		options.to.push(argv.githubURL)
+	}
+	console.log('1. "package.json" replacement results:', replace.sync(options))
 
 // 2. Replace in composer.json
-options = {
-	files: [
-		'composer.json',
-	],
-	from: [
-		/"name": "[^"]+"/,
-		/"version": "[^"]+"/,
-		/"description": "[^"]+"/,
-		/PixelgradeLT\\\\PartTemplate/, // The base PHP namespace.
-		/languages\/pixelgradelt-part-template\.pot/ // The Composer scripts section.
-	],
-	to: [
-		`"name": "${argv.packageName}"`,
-		`"version": "${argv.version}"`,
-		`"description": "${argv.description}"`,
-		`${argv.namespace.replace(/\\/g, "\\\\")}`, // The base PHP namespace.
-		`languages/${pluginSlug}.pot`
-	],
-}
+	options = {
+		dry: dryRun,
+		files: [
+			'composer.json',
+		],
+		from: [
+			/"name": "[^"]+"/,
+			/"version": "[^"]+"/,
+			/"description": "[^"]+"/,
+			/PixelgradeLT\\\\PartTemplate/, // The base PHP namespace.
+			/languages\/pixelgradelt-part-template\.pot/ // The Composer scripts section.
+		],
+		to: [
+			`"name": "${argv.packageName}"`,
+			`"version": "${argv.version}"`,
+			`"description": "${argv.description}"`,
+			`${argv.namespace.replace(/\\/g, "\\\\")}`, // The base PHP namespace.
+			`languages/${pluginSlug}.pot`
+		],
+	}
 // Replace also the URLs if we've been given a GitHub repo url (without the .git part).
-if (argv.githubURL) {
-	options.from.push(/https:\/\/github.com\/pixelgradelt\/pixelgradelt-part-template/g)
-	options.to.push(argv.githubURL)
-}
-console.log('2. "composer.json" replacement results:', replace.sync(options))
+	if (argv.githubURL) {
+		options.from.push(/https:\/\/github.com\/pixelgradelt\/pixelgradelt-part-template/g)
+		options.to.push(argv.githubURL)
+	}
+	console.log('2. "composer.json" replacement results:', replace.sync(options))
 
 // 3. Replace in pixelgradelt-part-template.php
-options = {
-	files: [
-		'pixelgradelt-part-template.php',
-	],
-	from: [
-		/^ \* Version: .*$/gm,
-		/VERSION = '.+'/,
-		/^ \* Description: .*$/gm,
-		/^ \* Text Domain: .*$/gm,
-		/PixelgradeLT Part Template Title/g
-	],
-	to: [
-		` * Version: ${argv.version}`,
-		`VERSION = '${argv.version}'`,
-		` * Description: ${argv.description}`,
-		` * Text Domain: ${pluginTextDomain}`,
-		argv.title
-	],
-}
+	options = {
+		dry: dryRun,
+		files: [
+			'pixelgradelt-part-template.php',
+		],
+		from: [
+			/^ \* Version: .*$/gm,
+			/VERSION = '.+'/,
+			/^ \* Description: .*$/gm,
+			/^ \* Text Domain: .*$/gm,
+			/PixelgradeLT Part Template Title/g
+		],
+		to: [
+			` * Version: ${argv.version}`,
+			`VERSION = '${argv.version}'`,
+			` * Description: ${argv.description}`,
+			` * Text Domain: ${pluginTextDomain}`,
+			argv.title
+		],
+	}
 // Replace also the URLs if we've been given a GitHub repo url (without the .git part).
-if (argv.githubURL) {
-	options.from.push(/https:\/\/github.com\/pixelgradelt\/pixelgradelt-part-template/g)
-	options.to.push(argv.githubURL)
-	options.from.push(/^ \* GitHub Plugin URI: pixelgradelt\/pixelgradelt-part-template/gm)
-	options.to.push(' * GitHub Plugin URI: ' + argv.githubURL.replace(/https:\/\/github.com\//, ''))
-}
-console.log('3. Main plugin file replacement results:', replace.sync(options))
+	if (argv.githubURL) {
+		options.from.push(/https:\/\/github.com\/pixelgradelt\/pixelgradelt-part-template/g)
+		options.to.push(argv.githubURL)
+		options.from.push(/^ \* GitHub Plugin URI: pixelgradelt\/pixelgradelt-part-template/gm)
+		options.to.push(' * GitHub Plugin URI: ' + argv.githubURL.replace(/https:\/\/github.com\//, ''))
+	}
+	console.log('3. Main plugin file replacement results:', replace.sync(options))
 
 // 4. Rename pixelgradelt-part-template.php
-// fs.rename( 'pixelgradelt-part-template.php', pluginSlug+'.php', function(err) {
-// 	if ( err ) console.log('ERROR: ' + err);
-// });
-console.log('4. Renamed main plugin file to "' + pluginSlug + '.php".')
+	if (!dryRun) {
+		fs.rename('pixelgradelt-part-template.php', pluginSlug + '.php', function (err) {
+			if (err) console.log('ERROR: ' + err);
+		});
+	}
+	console.log('4. Renamed main plugin file to "' + pluginSlug + '.php".')
 
-// 5. Replace in all .php files
-options = {
-	files: [
-		'./**/*.php',
-	],
-	from: [
-		/@since .*$/gm,
-		/PixelgradeLT\\PartTemplate/, // the PHP namespaces
-		/^ \* Description: .*$/gm,
-		/^ \* Text Domain: .*$/gm,
-		/PixelgradeLT Part Template Title/g
-	],
-	to: [
-		`@since ${argv.version}`,
-		`${argv.namespace}`,
-		` * Description: ${argv.description}`,
-		` * Text Domain: ${pluginTextDomain}`,
-		argv.title
-	],
-}
+// 5. Replace in all other files
+	options = {
+		dry: dryRun,
+		files: [
+			'./docs/**/*',
+			'./src/**/*',
+			'./tests/**/*',
+			'./views/**/*',
+			'./.phpcs.xml.dist'
+		],
+		from: [
+			/@since .*$/gm,
+			/PixelgradeLT\\PartTemplate/, // the PHP namespaces
+			/'0.1.0'/g, // The version
+			/'pixelgradelt_part_template'/g, // The text domain
+			/pixelgradelt_part_template/g, // Prefixes
+			/pixelgradelt-part-template/g, // Prefixes
+			/PixelgradeLT Part Template/g
+		],
+		to: [
+			`@since ${argv.version}`,
+			`${argv.namespace}`,
+			`${argv.version}`,
+			`'${pluginTextDomain}'`,
+			`'${pluginSlugUnderscored}'`,
+			`'${pluginSlug}'`,
+			argv.title
+		],
+	}
 // Replace also the URLs if we've been given a GitHub repo url (without the .git part).
-if (argv.githubURL) {
-	options.from.push(/https:\/\/github.com\/pixelgradelt\/pixelgradelt-part-template/g)
-	options.to.push(argv.githubURL)
-	options.from.push(/^ \* GitHub Plugin URI: pixelgradelt\/pixelgradelt-part-template/gm)
-	options.to.push(' * GitHub Plugin URI: ' + argv.githubURL.replace(/https:\/\/github.com\//, ''))
+	if (argv.githubURL) {
+		options.from.push(/https:\/\/github.com\/pixelgradelt\/pixelgradelt-part-template/g);
+		options.to.push(argv.githubURL);
+	}
+	console.log('5. Rest of the files replacement results:', replace.sync(options));
+
+// 6. Delete some files that should not be present, just in case.
+	if (!dryRun) {
+		const toRemove = [
+			'./composer.lock', // No need to provide lock file.
+			'./languages/pixelgradelt-part-template.pot', // The translation file should be generated on release.
+		];
+		fs.remove('composer.lock', function (err) {
+			if (err) console.log('ERROR: ' + err);
+		});
+	}
+	console.log('6. Cleaned up some files to not let them get in your way.')
+
+	console.log('');
+	console.log(chalk.green('Done! ' + chalk.bold('Commit the new changes to your Git repo') + ' and get developing.'));
 }
-// console.log('5. PHP files replacement results:', replace.sync(options))
+
+// Get arguments
+let missingOrInvalidArguments = false;
+const argv = require('minimist')(process.argv.slice(2), {
+	string: ['packageName', 'title', 'description', 'namespace', 'version'],
+	boolean: ['dryRun', 'dry', 'help'],
+})
+
+if ( !!argv.help ) {
+	console.log('');
+	console.log('Here are the arguments you can/should provide:');
+	console.log('');
+	console.log( chalk.blue('--packageName')+'           '+chalk.red('Required. ')+'The full Composer package name for this LT Part. The plugin slug and textdomain will be deduced from this.');
+	console.log( chalk.blue('--namespace')+'             '+chalk.red('Required. ')+'The base PHP namespace to use throughout the PHP code.');
+	console.log( chalk.blue('--title')+'                 '+chalk.red('Required. ')+'The plugin name as displayed throughout the WordPress dashboard.');
+	console.log( chalk.blue('--description')+'           '+chalk.red('Required. ')+'The plugin description as displayed throughout the WordPress dashboard and the Composer package description.');
+	console.log( chalk.blue('--version')+'               '+chalk.red('Required. ')+'The starting version of the plugin. Keep it SemVer 2.0 compatible <https://semver.org/>.');
+	console.log( chalk.blue('--githubURL')+'             The GitHub repo URL of this LT Part (without the .git part). Just a simple HTTPS URL.');
+	console.log( chalk.blue('--dryRun')+'                Don\'t do any actual changes, just simulate.');
+	console.log( chalk.blue('--help')+'                  Display these helpful details.');
+
+	process.exit(0);
+}
+
+const dryRun = !!argv.dryRun || !!argv.dry;
+
+if ( ! dryRun ) {
+
+	// user confirmation required!
+	prompt.start();
+
+	// disable prefix message & colors
+	prompt.message = '';
+	prompt.delimiter = '';
+	prompt.colors = false;
+
+	// wait for user confirmation
+	prompt.get({
+		properties: {
+
+			// setup the dialog
+			confirm: {
+				// allow yes, no, y, n, YES, NO, Y, N as answer
+				pattern: /^(yes|no|y|n)$/gi,
+				description: 'Do you really want to initialise all the files as for a fresh LT Part?',
+				message: 'Type yes/no',
+				required: true,
+				default: 'no'
+			}
+		}
+	}, function (err, result) {
+		// transform to lower case
+		const c = result.confirm.toLowerCase();
+
+		// yes or y typed ? otherwise abort
+		if (c != 'y' && c != 'yes') {
+			console.log('Stopping the LT Part initialisation. Bye bye!');
+			process.exit(0);
+		}
+
+		// Action confirmed. Carry on.
+
+		validateArgs();
+		initialise();
+	});
+} else {
+	validateArgs();
+	initialise();
+}
+
+

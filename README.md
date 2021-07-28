@@ -28,7 +28,7 @@ Each LT Part companion plugin should reside in **a separate Git repo,** most lik
 
 ![Use this repo as a template for a new GitHub repo](docs/images/use-as-template.png)
 
-After that, clone the new GitHub repo locally for development by running `git clone https://github.com/USERNAME/REPOSITORY.git your-part-slug`.
+After that, **clone the new GitHub repo locally** by running `git clone https://github.com/USERNAME/REPOSITORY.git your-part-slug`.
 
 Now you can start setting up your LT Part companion plugin, clean-up, and develop the specific logic.
 

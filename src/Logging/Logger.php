@@ -60,7 +60,9 @@ final class Logger extends BaseIO {
 	 * @since 0.1.0
 	 *
 	 * @param string     $minimum_level Minimum level to log.
-	 * @param array|null $handlers      Optional. Array of log handlers. If $handlers is not provided, the filter 'pixelgradelt_part_template_register_log_handlers' will be used to define the handlers. If $handlers is provided, the filter will not be applied and the handlers will be used directly.
+	 * @param array|null $handlers Optional. Array of log handlers.
+	 *                             If $handlers is not provided, the filter 'pixelgradelt_part_template/register_log_handlers' will be used to define the handlers.
+	 *                             If $handlers is provided, the filter will not be applied and the handlers will be used directly.
 	 */
 	public function __construct( string $minimum_level, array $handlers = null ) {
 		$this->minimum_level_severity = LogLevels::get_level_severity( $minimum_level );
