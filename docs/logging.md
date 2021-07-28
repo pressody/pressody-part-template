@@ -4,7 +4,7 @@ PixelgradeLT Part Template implements a [PSR-3 Logger Interface](https://www.php
 
 Messages are logged in daily logs in the `wp-content/uploads/pixelgradelt-part-template-logs/` directory when `WP_DEBUG` is enabled.
 
-The file-based logs are rotated if they exceed 5 Mb (by default; use the `pixelgradelt_part_template_log_file_size_limit` filter to change this), and also automatically cleaned if older than 30 days (by default; use the `pixelgradelt_part_template_logger_days_to_retain_logs` filter to change this).
+The file-based logs are rotated if they exceed 5 Mb (by default; use the `pixelgradelt_part_template/log_file_size_limit` filter to change this), and also automatically cleaned if older than 30 days (by default; use the `pixelgradelt_part_template/logger_days_to_retain_logs` filter to change this).
 
 ## Changing the Log Level
 
@@ -32,7 +32,7 @@ use Monolog\Processor\PsrLogMessageProcessor;
 /**
  * Register the logger before PixelgradeLT Part Template is composed.
  */
-add_action( 'pixelgradelt_part_template_compose', function( $plugin, $container ) {
+add_action( 'pixelgradelt_part_template/compose', function( $plugin, $container ) {
 	$container['logger'] = function() {
 		$logger = new Logger( 'pixelgradelt-part-template' );
 		$logger->pushHandler( new ErrorLogHandler( ErrorLogHandler::OPERATING_SYSTEM, LOGGER::WARNING ) );

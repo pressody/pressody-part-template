@@ -12,6 +12,13 @@ If you know what you are doing you can go any number of ways towards developing 
 
 This template's intention is to **speed up development and make it more error-proof.** By providing **a set of patterns** (like Dependency Injection, Loggers and Log Handlers, etc.), this template ensures you can easily and confidently bolt things together and have your logic behave predictably.
 
+### Step 0 - Decide
+
+Before tackling repos and files, **you need to make some decisions:**
+1. **Decide on your LT Part Composer package name** as this will determine things like plugin directory, main file name, textdomain, etc. Usually you would use the
+
+
+
 ### Step 1 - Create a new GitHub repo
 
 Each LT Part companion plugin should reside in **a separate Git repo,** most likely hosted on GitHub.com. 
@@ -19,8 +26,8 @@ Each LT Part companion plugin should reside in **a separate Git repo,** most lik
 **The hard way** would be to:
 - create a new, empty GitHub repo yourself
 - open a terminal window into your development directory
-- clone _this_ repo locally by running `git clone --depth 1 https://github.com/pixelgradelt/pixelgradelt-part-template your-part-slug` (replace `your-part-slug` with the actual slug you intend to use)
-- `cd` into the newly created directory (`your-part-slug`)
+- clone _this_ repo locally by running `git clone --depth 1 https://github.com/pixelgradelt/pixelgradelt-part-template your-part-name` (replace `your-part-name` with the actual name you intend to use)
+- `cd` into the newly created directory (`your-part-name`)
 - change the remote URL to your new, empty GitHub repo by running `git remote set-url origin https://github.com/USERNAME/REPOSITORY.git` and verify the change with `git remote -v`
 - finally, push your "changes" to the GitHub repo by running `git push origin`.
 
@@ -28,12 +35,25 @@ Each LT Part companion plugin should reside in **a separate Git repo,** most lik
 
 ![Use this repo as a template for a new GitHub repo](docs/images/use-as-template.png)
 
-After that, **clone the new GitHub repo locally** by running `git clone https://github.com/USERNAME/REPOSITORY.git your-part-slug`.
+After that, **clone the new GitHub repo locally** by running `git clone https://github.com/USERNAME/REPOSITORY.git your-part-name`.
 
 Now you can start setting up your LT Part companion plugin, clean-up, and develop the specific logic.
 
 ### Step 2 - Set up your PixelgradeLT Part plugin
 
+Now that you have the files as provided by the template, it is time to adapt them to your new LT Part. Again, there is a hard way and an easy way.
+
+**The hard way** would be to:
+- go through each file and replace things like textdomain, PHP namespaces, versions, etc.
+- change the name of certain files (like the main plugin file)
+- delete some files that get in your way.
+
+**The easy way** is to use the already provided **initialisation script.** Do the following:
+- install the node packages with `npm install`
+- run the `./bin/init` script from the command line; use `./bin/init --help` to get all the explanations on how to use it
+- commit your file changes to your repo and you're good to go.
+
+### 
 
 
 ## Development

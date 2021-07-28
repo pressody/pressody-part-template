@@ -55,9 +55,17 @@ function validateArgs() {
 
 function initialise() {
 // 0. Deduce stuff from provided stuff
-	const pluginSlug = argv.packageName.split('/')[1].toLowerCase().replace(/[\W\D]+/g, '-');
-	const pluginTextDomain = pluginSlug.replace(/-/g, '_');
-	const pluginSlugUnderscored = pluginSlug.replace(/-/g, '_');
+	let [pluginVendor, pluginName] = argv.packageName.split('/');
+	pluginName = pluginName.toLowerCase().replace(/[\W\D]+/g, '-');
+	let pluginPrefix = pluginName;
+	if ( pluginVendor.includes('pixelgradelt') ) {
+		pluginPrefix = 'pixelgradelt-' + pluginPrefix;
+	} else {
+		pluginPrefix = pluginVendor.toLowerCase().replace(/[\W\D]+/g, '-') + '-' + pluginPrefix;
+	}
+	const pluginTextDomain = pluginPrefix.replace(/-/g, '_');
+	let pluginPrefixUnderscored = pluginPrefix.replace(/-/g, '_');
+
 	let options = {};
 
 // 1. Replace in package.json
@@ -66,8 +74,18 @@ function initialise() {
 		files: [
 			'package.json',
 		],
-		from: [/"name": "[^"]+"/, /"version": "[^"]+"/, /"description": "[^"]+"/, /"pixelgradelt-part-template.php"/],
-		to: [`"name": "${pluginSlug}"`, `"version": "${argv.version}"`, `"description": "${argv.description}"`, `"${pluginSlug}.php"`],
+		from: [
+			/"name": "[^"]+"/,
+			/"version": "[^"]+"/,
+			/"description": "[^"]+"/,
+			/"pixelgradelt-part-template.php"/
+		],
+		to: [
+			`"name": "${pluginPrefix}"`,
+			`"version": "${argv.version}"`,
+			`"description": "${argv.description}"`,
+			`"${pluginName}.php"`
+		],
 	}
 // Replace also the URLs if we've been given a GitHub repo url (without the .git part).
 	if (argv.githubURL) {
@@ -94,7 +112,7 @@ function initialise() {
 			`"version": "${argv.version}"`,
 			`"description": "${argv.description}"`,
 			`${argv.namespace.replace(/\\/g, "\\\\")}`, // The base PHP namespace.
-			`languages/${pluginSlug}.pot`
+			`languages/${pluginName}.pot`
 		],
 	}
 // Replace also the URLs if we've been given a GitHub repo url (without the .git part).
@@ -115,14 +133,22 @@ function initialise() {
 			/VERSION = '.+'/,
 			/^ \* Description: .*$/gm,
 			/^ \* Text Domain: .*$/gm,
-			/PixelgradeLT Part Template Title/g
+			/PixelgradeLT Part Template Title/g,
+			/pixelgradelt-part-template.php/g,
+			/'pixelgradelt-part-template'/g, // The slug
+			/\$pixelgradelt_part_template/g, // Prefixes
+			/'pixelgradelt_part_template/g, // Prefixes
 		],
 		to: [
 			` * Version: ${argv.version}`,
 			`VERSION = '${argv.version}'`,
 			` * Description: ${argv.description}`,
 			` * Text Domain: ${pluginTextDomain}`,
-			argv.title
+			argv.title,
+			`${pluginName}.php`,
+			`'${pluginName}'`,
+			`\$${pluginPrefixUnderscored}`,
+			`'${pluginPrefixUnderscored}`,
 		],
 	}
 // Replace also the URLs if we've been given a GitHub repo url (without the .git part).
@@ -136,11 +162,11 @@ function initialise() {
 
 // 4. Rename pixelgradelt-part-template.php
 	if (!dryRun) {
-		fs.rename('pixelgradelt-part-template.php', pluginSlug + '.php', function (err) {
+		fs.rename('pixelgradelt-part-template.php', pluginName + '.php', function (err) {
 			if (err) console.log('ERROR: ' + err);
 		});
 	}
-	console.log('4. Renamed main plugin file to "' + pluginSlug + '.php".')
+	console.log('4. Renamed main plugin file to "' + pluginName + '.php".')
 
 // 5. Replace in all other files
 	options = {
@@ -154,21 +180,27 @@ function initialise() {
 		],
 		from: [
 			/@since .*$/gm,
-			/PixelgradeLT\\PartTemplate/, // the PHP namespaces
+			/PixelgradeLT\\PartTemplate/g, // the PHP namespaces
 			/'0.1.0'/g, // The version
+			/PixelgradeLT Part Template/g,
+			/pixelgradelt-part-template.php/g,
+			/'pixelgradelt-part-template\/pixelgradelt-part-template.php'/g,
 			/'pixelgradelt_part_template'/g, // The text domain
-			/pixelgradelt_part_template/g, // Prefixes
-			/pixelgradelt-part-template/g, // Prefixes
-			/PixelgradeLT Part Template/g
+			/'pixelgradelt_part_template/g, // Prefixes
+			/'pixelgradelt-part-template/g, // Prefixes
+			/\/pixelgradelt-part-template/g, // Prefixes
 		],
 		to: [
 			`@since ${argv.version}`,
 			`${argv.namespace}`,
 			`${argv.version}`,
-			`'${pluginTextDomain}'`,
-			`'${pluginSlugUnderscored}'`,
-			`'${pluginSlug}'`,
 			argv.title
+			`${pluginName}.php`,
+			`${pluginName}/${pluginName}.php`,
+			`'${pluginTextDomain}'`,
+			`'${pluginPrefixUnderscored}`,
+			`'${pluginPrefix}`,
+			`/${pluginPrefix}`,
 		],
 	}
 // Replace also the URLs if we've been given a GitHub repo url (without the .git part).
