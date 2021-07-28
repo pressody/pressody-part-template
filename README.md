@@ -55,7 +55,14 @@ Now that you have the files as provided by the template, it is time to adapt the
 
 For extra help, here is a full command to start from:
 ```shell
-./bin/init --packageName="pixelgradelt-records/part_woocommerce" --title="PixelgradeLT Part WooCommerce" --namespace="PixelgradeLT\PartWoocommerce" --description="This is a description." --version="0.5.0" --githubURL="https://github.com/ohoo/part-woocommerce" --dryRun
+./bin/init \
+	--packageName="pixelgradelt-records/part_woocommerce" \
+	--title="PixelgradeLT Part WooCommerce" \
+	--namespace="PixelgradeLT\PartWoocommerce" \
+	--description="This is a description." \
+	--version="0.5.0" \
+	--githubURL="https://github.com/ohoo/part-woocommerce" \
+	--dryRun
 ```
 You should **keep the quotes** on arguments values to save you from the need to escape values like the namespace!
 
