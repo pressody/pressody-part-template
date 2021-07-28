@@ -166,7 +166,7 @@ function initialise() {
 	console.log('3. Main plugin file replacement results:', replace.sync(options))
 
 	// 4. Rename pixelgradelt-part-template.php
-	if (!dryRun) {
+	if (!dryRun && fs.existsSync('pixelgradelt-part-template.php') ) {
 		fs.rename('pixelgradelt-part-template.php', pluginName + '.php', function (err) {
 			if (err) console.log('ERROR: ' + err);
 		});
@@ -237,7 +237,8 @@ function initialise() {
 
 function extremeDietProgram() {
 	if (!dryRun) {
-		console.log('Started the extreme diet program.')
+		console.log('---');
+		console.log('Starting the extreme diet program.');
 
 		// Edit files
 		let [pluginVendor, pluginName] = argv.packageName.split('/');
@@ -337,7 +338,7 @@ function extremeDietProgram() {
 			'./src/Utils',
 		];
 		toRemove.forEach( function( file ) {
-			fsExtra.removeSync(file, function (err) {
+			fsExtra.remove(file, function (err) {
 				if (err) console.log('ERROR: ' + err);
 				console.log('Deleted '+file);
 			});
