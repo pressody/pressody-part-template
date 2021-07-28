@@ -224,7 +224,7 @@ function initialise() {
 			'./languages/pixelgradelt-part-template.pot', // The translation file should be generated on release.
 		];
 		toRemove.forEach( function( file ) {
-			fsExtra.removeSync(file, function (err) {
+			fsExtra.remove(file, function (err) {
 				if (err) console.log('ERROR: ' + err);
 			});
 		})
@@ -238,27 +238,6 @@ function initialise() {
 function extremeDietProgram() {
 	if (!dryRun) {
 		console.log('Started the extreme diet program.')
-		const toRemove = [
-			'./.github',
-			'./assets',
-			'./docs',
-			'./tests',
-			'./views',
-			'./.jshintrc',
-			'./.phpcs.xml.dist',
-			'./phpunit.xml.dist',
-			'./src/Exception',
-			'./src/Logging',
-			'./src/Provider',
-			'./src/Screen',
-			'./src/Utils',
-		];
-		toRemove.forEach( function( file ) {
-			fsExtra.removeSync(file, function (err) {
-				if (err) console.log('ERROR: ' + err);
-				console.log('Deleted '+file);
-			});
-		})
 
 		// Edit files
 		let [pluginVendor, pluginName] = argv.packageName.split('/');
@@ -296,15 +275,27 @@ function extremeDietProgram() {
 		options = {
 			files: [`./src/ServiceProvider.php`,],
 			from: [
-				/\$container\['hooks\.activation'\] = function \(.*\) {[^}]*};/m,
-				/\$container\['hooks\.admin_assets'\] = function \(.*\) {[^}]*};/m,
-				/\$container\['hooks\.deactivation'\] = function \(.*\) {[^}]*};/m,
-				/\$container\['hooks\.upgrade'\] = function \(.*\) {[^}]*};/m,
-				/\$container\['logs\.logger'\] = function \(.*\) {[^}]*};/m,
-				/\$container\['logs\.handlers\.file'\] = function \(.*\) {[^}]*};/m,
-				/\$container\['logs\.manager'\] = function \(.*\) {[^}]*};/m,
+				/use .*\\Logging\\Handler\\FileLogHandler;/,
+				/use .*\\Logging\\Logger;/,
+				/use .*\\Logging\\LogsManager;/,
+				/use Psr\\Log\\LogLevel;/,
+				/use .*\\Provider;/,
+				/\$container\['hooks\.activation'\] = function \(.*\) {[^}]*};/,
+				/\$container\['hooks\.admin_assets'\] = function \(.*\) {[^}]*};/,
+				/\$container\['hooks\.deactivation'\] = function \(.*\) {[^}]*};/,
+				/\$container\['hooks\.upgrade'\] = function \(.*\) {[^}]*};/,
+				/\$container\['logs\.logger'\] = function \(.*\) {[^}]*};/,
+				/\$container\['logs\.level'\] = function \(.*\) {[^}]*}[^}]*};/,
+				/\$container\['logs\.handlers\.file'\] = function \(.*\) {[^}]*};/,
+				/\$container\['logs\.manager'\] = function \(.*\) {[^}]*};/,
 			],
 			to: [
+				'',
+				'',
+				'',
+				'',
+				'',
+				'',
 				'',
 				'',
 				'',
@@ -329,7 +320,29 @@ function extremeDietProgram() {
 		fs.writeFileSync('../composer.json', JSON.stringify(composerJson, null, 4));
 		console.log('Slimmed "composer.json".')
 
-		console.log('The extreme diet program has been applied. You now have just the bare-minimum.')
+		// Remove files and folders.
+		const toRemove = [
+			'./.github',
+			'./assets',
+			'./docs',
+			'./tests',
+			'./views',
+			'./.jshintrc',
+			'./.phpcs.xml.dist',
+			'./phpunit.xml.dist',
+			'./src/Exception',
+			'./src/Logging',
+			'./src/Provider',
+			'./src/Screen',
+			'./src/Utils',
+		];
+		toRemove.forEach( function( file ) {
+			fsExtra.removeSync(file, function (err) {
+				if (err) console.log('ERROR: ' + err);
+				console.log('Deleted '+file);
+			});
+		})
+
 	} else {
 		console.log('Skipping the extreme diet program in --dryRun mode.')
 	}
