@@ -192,6 +192,7 @@ function initialise() {
 			/'pixelgradelt-part-template\/pixelgradelt-part-template.php'/g,
 			/'pixelgradelt_part_template'/g, // The text domain
 			/'pixelgradelt_part_template/g, // Prefixes
+			/"pixelgradelt_part_template/g, // Prefixes
 			/'pixelgradelt-part-template/g, // Prefixes
 			/\/pixelgradelt-part-template/g, // Prefixes
 		],
@@ -204,6 +205,7 @@ function initialise() {
 			`${pluginName}/${pluginName}.php`,
 			`'${pluginTextDomain}'`,
 			`'${pluginPrefixUnderscored}`,
+			`"${pluginPrefixUnderscored}`,
 			`'${pluginPrefix}`,
 			`/${pluginPrefix}`,
 		],
