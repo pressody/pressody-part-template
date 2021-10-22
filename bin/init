@@ -61,7 +61,7 @@ function initialise() {
 	let [pluginVendor, pluginName] = argv.packageName.split('/');
 	pluginName = pluginName.toLowerCase().replace(/[^a-z\d]+/g, '-');
 	let pluginPrefix = pluginName;
-	if ( pluginVendor.includes('pixelgradelt') ) {
+	if ( pluginVendor.includes('pixelgradelt') && ! pluginPrefix.includes('pixelgradelt') ) {
 		pluginPrefix = 'pixelgradelt-' + pluginPrefix;
 	} else {
 		pluginPrefix = pluginVendor.toLowerCase().replace(/[^a-z\d]+/g, '-') + '-' + pluginPrefix;
