@@ -108,13 +108,14 @@ function initialise() {
 			/"version": "[^"]+"/,
 			/"description": "[^"]+"/,
 			/PixelgradeLT\\\\PartTemplate/, // The base PHP namespace.
+			/PixelgradeLT\\\\PartTemplate\\\\Tests/, // The base test PHP namespace.
 			/languages\/pixelgradelt-part-template\.pot/ // The Composer scripts section.
 		],
 		to: [
 			`"name": "${argv.packageName}"`,
 			`"version": "${argv.version}"`,
 			`"description": "${argv.description}"`,
-			pluginNamespace.replace(/\\/g, '\\\\'), // The base PHP namespace with escaped separators.
+			pluginNamespace.replace(/\\/g, '\\\\') + "\\\\Tests", // The base PHP namespace with escaped separators.
 			`languages/${pluginName}.pot`
 		],
 	}
