@@ -7,7 +7,7 @@
  * @since 0.1.0
  */
 
-declare ( strict_types=1 );
+declare ( strict_types = 1 );
 
 namespace PixelgradeLT\PartTemplate\Logging\Handler;
 
@@ -80,11 +80,11 @@ abstract class LogHandler implements LogHandlerInterface {
 			unset( $temp_context['logCategory'] );
 		}
 		if ( ! empty( $temp_context ) ) {
-			$entry .= ' ' . wp_json_encode( $temp_context, \JSON_UNESCAPED_SLASHES );
+			$entry .= ' ' . \wp_json_encode( $temp_context, \JSON_UNESCAPED_SLASHES );
 		}
 
-		return apply_filters(
-			'pixelgradelt_part_template/format_log_entry',
+		return \apply_filters(
+			'pixelgradelt_retailer/format_log_entry',
 			$entry,
 			[
 				'timestamp' => $timestamp,
@@ -101,7 +101,6 @@ abstract class LogHandler implements LogHandlerInterface {
 	 * @since 0.1.0
 	 *
 	 * @param mixed $value Message.
-	 *
 	 * @return string
 	 */
 	protected function to_string( $value ): string {
@@ -110,7 +109,7 @@ abstract class LogHandler implements LogHandlerInterface {
 		} elseif ( is_object( $value ) && method_exists( '__toString', $value ) ) {
 			$value = (string) $value;
 		} elseif ( ! is_scalar( $value ) ) {
-			$value = wp_json_encode( $value, \JSON_UNESCAPED_SLASHES, 128 );
+			$value = \wp_json_encode( $value, \JSON_UNESCAPED_SLASHES, 128 );
 		}
 
 		return (string) $value;

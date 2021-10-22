@@ -14,6 +14,7 @@ namespace PixelgradeLT\PartTemplate\Logging;
 use Composer\IO\BaseIO;
 use Psr\Log\LogLevel;
 use function PixelgradeLT\PartTemplate\doing_it_wrong;
+use function PixelgradeLT\PartTemplate\is_running_unit_tests;
 
 /**
  * Default logger class.
@@ -60,15 +61,13 @@ final class Logger extends BaseIO {
 	 * @since 0.1.0
 	 *
 	 * @param string     $minimum_level Minimum level to log.
-	 * @param array|null $handlers Optional. Array of log handlers.
-	 *                             If $handlers is not provided, the filter 'pixelgradelt_part_template/register_log_handlers' will be used to define the handlers.
-	 *                             If $handlers is provided, the filter will not be applied and the handlers will be used directly.
+	 * @param array|null $handlers      Optional. Array of log handlers. If $handlers is not provided, the filter 'pixelgradelt_retailer_register_log_handlers' will be used to define the handlers. If $handlers is provided, the filter will not be applied and the handlers will be used directly.
 	 */
 	public function __construct( string $minimum_level, array $handlers = null ) {
 		$this->minimum_level_severity = LogLevels::get_level_severity( $minimum_level );
 
 		if ( null === $handlers ) {
-			$handlers = apply_filters( 'pixelgradelt_part_template/register_log_handlers', array() );
+			$handlers = \apply_filters( 'pixelgradelt_retailer/register_log_handlers', array() );
 		}
 
 		$register_handlers = array();
@@ -83,7 +82,7 @@ final class Logger extends BaseIO {
 						__METHOD__,
 						sprintf(
 						/* translators: 1: class name 2: WC_Log_Handler_Interface */
-							__( 'The provided handler %1$s does not implement %2$s.', 'pixelgradelt_part_template' ),
+							__( 'The provided handler %1$s does not implement %2$s.', 'pixelgradelt_retailer' ),
 							'<code>' . esc_html( is_object( $handler ) ? get_class( $handler ) : $handler ) . '</code>',
 							'<code>PixelgradeLT\PartTemplate\Logging\Handler\LogHandlerInterface</code>'
 						),
@@ -94,17 +93,6 @@ final class Logger extends BaseIO {
 		}
 
 		$this->handlers  = $register_handlers;
-	}
-
-	/**
-	 * Change the minimum level to log.
-	 *
-	 * @param string $minimum_level Minimum level to log. If not a valid level, nothing will be changed.
-	 */
-	public function setMinimumLevelSeverity( string $minimum_level ) {
-		if ( LogLevels::is_valid_level( $minimum_level ) ) {
-			$this->minimum_level_severity = LogLevels::get_level_severity( $minimum_level );
-		}
 	}
 
 	/**
@@ -119,20 +107,18 @@ final class Logger extends BaseIO {
 	public function log( $level, $message, array $context = [] ) {
 		if ( ! LogLevels::is_valid_level( $level ) ) {
 			/* translators: 1: WC_Logger::log 2: level */
-			doing_it_wrong( __METHOD__, sprintf( __( '%1$s was called with an invalid level "%2$s".', 'pixelgradelt_part_template' ), '<code>PixelgradeLT\PartTemplate\Logging\Logger::log</code>', $level ), '0.1.0' );
+			doing_it_wrong( __METHOD__, sprintf( __( '%1$s was called with an invalid level "%2$s".', 'pixelgradelt_retailer' ), '<code>PixelgradeLT\PartTemplate\Logging\Logger::log</code>', $level ), '0.1.0' );
 		}
 
 		if ( ! $this->should_handle( $level ) ) {
 			return;
 		}
 
-		$timestamp = current_time( 'timestamp', 1 );
-		$message   = apply_filters( 'pixelgradelt_part_template/logger_log_message', $message, $level, $context );
+		$timestamp = \current_time( 'timestamp', 1 );
+		$message   = \apply_filters( 'pixelgradelt_retailer/logger_log_message', $message, $level, $context );
 
 		foreach ( $this->handlers as $handler ) {
-			if ( $handler->handle( $timestamp, $level, $message, $context ) ) {
-				break;
-			}
+			$handler->handle( $timestamp, $level, $message, $context );
 		}
 	}
 
@@ -146,6 +132,11 @@ final class Logger extends BaseIO {
 	 * @return bool
 	 */
 	protected function should_handle( string $level ): bool {
+		// If we are running tests, we should not log.
+		if ( is_running_unit_tests() ) {
+			return false;
+		}
+
 		return $this->minimum_level_severity >= 0 && $this->minimum_level_severity <= LogLevels::get_level_severity( $level );
 	}
 
@@ -310,7 +301,7 @@ final class Logger extends BaseIO {
 	 * @since 0.1.0
 	 */
 	public function clear_expired_logs() {
-		$days      = absint( apply_filters( 'pixelgradelt_part_template/logger_days_to_retain_logs', 30 ) );
+		$days      = \absint( \apply_filters( 'pixelgradelt_retailer/logger_days_to_retain_logs', 30 ) );
 		$timestamp = strtotime( "-{$days} days" );
 
 		foreach ( $this->handlers as $handler ) {

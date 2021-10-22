@@ -159,8 +159,8 @@ class EmailLogHandler extends LogHandler {
 		return sprintf(
 			/* translators: 1: Site name 2: Maximum level 3: Log count */
 			_n(
-				'[%1$s] %2$s: %3$s PixelgradeLT Part Template log message',
-				'[%1$s] %2$s: %3$s PixelgradeLT Part Template log messages',
+				'[%1$s] %2$s: %3$s PixelgradeLT Retailer log message',
+				'[%1$s] %2$s: %3$s PixelgradeLT Retailer log messages',
 				$log_count,
 				'__plugin_txd'
 			),
@@ -180,8 +180,8 @@ class EmailLogHandler extends LogHandler {
 		$entries   = implode( PHP_EOL, $this->logs );
 		$log_count = count( $this->logs );
 		return _n(
-			'You have received the following PixelgradeLT Part Template log message:',
-			'You have received the following PixelgradeLT Part Template log messages:',
+			'You have received the following PixelgradeLT Retailer log message:',
+			'You have received the following PixelgradeLT Retailer log messages:',
 			$log_count,
 			'__plugin_txd'
 		) . PHP_EOL
