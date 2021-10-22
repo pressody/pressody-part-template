@@ -115,7 +115,8 @@ function initialise() {
 			`"name": "${argv.packageName}"`,
 			`"version": "${argv.version}"`,
 			`"description": "${argv.description}"`,
-			pluginNamespace.replace(/\\/g, '\\\\') + "\\\\Tests", // The base PHP namespace with escaped separators.
+			pluginNamespace.replace(/\\/g, '\\\\'), // The base PHP namespace with escaped separators.
+			pluginNamespace.replace(/\\/g, '\\\\') + "\\\\Tests", // The base test PHP namespace with escaped separators.
 			`languages/${pluginName}.pot`
 		],
 	}
