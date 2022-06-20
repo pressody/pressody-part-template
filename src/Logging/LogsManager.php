@@ -2,14 +2,14 @@
 /**
  * Logs management routines.
  *
- * @package PixelgradeLT
+ * @package Pressody
  * @license GPL-2.0-or-later
  * @since 0.1.0
  */
 
 declare ( strict_types = 1 );
 
-namespace PixelgradeLT\PartTemplate\Logging;
+namespace Pressody\PartTemplate\Logging;
 
 use Cedaro\WP\Plugin\AbstractHookProvider;
 use Psr\Log\LoggerInterface;
@@ -49,7 +49,7 @@ class LogsManager extends AbstractHookProvider {
 	 * @since 0.1.0
 	 */
 	public function register_hooks() {
-		$this->add_action( 'pixelgradelt_retailer/cleanup_logs', 'cleanup_logs' );
+		$this->add_action( 'pressody_retailer/cleanup_logs', 'cleanup_logs' );
 	}
 
 	protected function cleanup_logs() {

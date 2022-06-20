@@ -4,6 +4,6 @@
 
 ## [0.1.0] - 2021-06-28
 
-* Start from PixelgradeLT Part Template and hack at it.
+* Start from Pressody Part Template and hack at it.
 
 

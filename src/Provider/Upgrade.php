@@ -2,19 +2,19 @@
 /**
  * Upgrade routines.
  *
- * @package PixelgradeLT
+ * @package Pressody
  * @license GPL-2.0-or-later
  * @since 0.1.0
  */
 
 declare ( strict_types = 1 );
 
-namespace PixelgradeLT\PartTemplate\Provider;
+namespace Pressody\PartTemplate\Provider;
 
 use Cedaro\WP\Plugin\AbstractHookProvider;
 use Psr\Log\LoggerInterface;
 
-use const PixelgradeLT\PartTemplate\VERSION;
+use const Pressody\PartTemplate\VERSION;
 
 /**
  * Class for upgrade routines.
@@ -27,7 +27,7 @@ class Upgrade extends AbstractHookProvider {
 	 *
 	 * @var string
 	 */
-	const VERSION_OPTION_NAME = 'pixelgradelt_part_template_version';
+	const VERSION_OPTION_NAME = 'pressody_part_template_version';
 
 	/**
 	 * Logger.

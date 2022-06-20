@@ -8,7 +8,7 @@ const replace = require('replace-in-file');
 
 function validateArgs() {
 	if (!argv.packageName) {
-		console.warn('Provide --packageName="" representing the full Composer package name for this LT Part. The plugin slug and textdomain will be deduced from this.')
+		console.warn('Provide --packageName="" representing the full Composer package name for this PD Part. The plugin slug and textdomain will be deduced from this.')
 		missingOrInvalidArguments = true
 	} else {
 		// Taken from here https://getcomposer.org/schema.json
@@ -61,8 +61,8 @@ function initialise() {
 	let [pluginVendor, pluginName] = argv.packageName.split('/');
 	pluginName = pluginName.toLowerCase().replace(/[^a-z\d]+/g, '-');
 	let pluginPrefix = pluginName;
-	if ( pluginVendor.includes('pixelgradelt') && ! pluginPrefix.includes('pixelgradelt') ) {
-		pluginPrefix = 'pixelgradelt-' + pluginPrefix;
+	if ( pluginVendor.includes('pressody') && ! pluginPrefix.includes('pressody') ) {
+		pluginPrefix = 'pressody-' + pluginPrefix;
 	} else {
 		pluginPrefix = pluginVendor.toLowerCase().replace(/[^a-z\d]+/g, '-') + '-' + pluginPrefix;
 	}
@@ -81,7 +81,7 @@ function initialise() {
 			/"name": "[^"]+"/,
 			/"version": "[^"]+"/,
 			/"description": "[^"]+"/,
-			/"pixelgradelt-part-template.php"/
+			/"pressody-part-template.php"/
 		],
 		to: [
 			`"name": "${pluginPrefix}"`,
@@ -92,7 +92,7 @@ function initialise() {
 	}
 	// Replace also the URLs if we've been given a GitHub repo url (without the .git part).
 	if (argv.githubURL) {
-		options.from.push(/https:\/\/github.com\/pixelgradelt\/pixelgradelt-part-template/g)
+		options.from.push(/https:\/\/github.com\/pressody\/pressody-part-template/g)
 		options.to.push(argv.githubURL)
 	}
 	console.log('1. "package.json" replacement results:', replace.sync(options))
@@ -107,9 +107,9 @@ function initialise() {
 			/"name": "[^"]+"/,
 			/"version": "[^"]+"/,
 			/"description": "[^"]+"/,
-			/PixelgradeLT\\\\PartTemplate/, // The base PHP namespace.
-			/PixelgradeLT\\\\PartTemplate\\\\Tests/, // The base test PHP namespace.
-			/languages\/pixelgradelt-part-template\.pot/ // The Composer scripts section.
+			/Pressody\\\\PartTemplate/, // The base PHP namespace.
+			/Pressody\\\\PartTemplate\\\\Tests/, // The base test PHP namespace.
+			/languages\/pressody-part-template\.pot/ // The Composer scripts section.
 		],
 		to: [
 			`"name": "${argv.packageName}"`,
@@ -122,28 +122,28 @@ function initialise() {
 	}
 	// Replace also the URLs if we've been given a GitHub repo url (without the .git part).
 	if (argv.githubURL) {
-		options.from.push(/https:\/\/github.com\/pixelgradelt\/pixelgradelt-part-template/g)
+		options.from.push(/https:\/\/github.com\/pressody\/pressody-part-template/g)
 		options.to.push(argv.githubURL)
 	}
 	console.log('2. "composer.json" replacement results:', replace.sync(options))
 
-	// 3. Replace in pixelgradelt-part-template.php
+	// 3. Replace in pressody-part-template.php
 	options = {
 		dry: dryRun,
 		files: [
-			'pixelgradelt-part-template.php',
+			'pressody-part-template.php',
 		],
 		from: [
 			/^ \* Version: .*$/gm,
 			/VERSION = '.+'/,
 			/^ \* Description: .*$/gm,
 			/^ \* Text Domain: .*$/gm,
-			/PixelgradeLT\\PartTemplate/, // The base PHP namespace.
-			/PixelgradeLT Part Template Title/g,
-			/pixelgradelt-part-template.php/g,
-			/'pixelgradelt-part-template'/g, // The slug
-			/\$pixelgradelt_part_template/g, // Prefixes
-			/'pixelgradelt_part_template/g, // Prefixes
+			/Pressody\\PartTemplate/, // The base PHP namespace.
+			/Pressody Part Template Title/g,
+			/pressody-part-template.php/g,
+			/'pressody-part-template'/g, // The slug
+			/\$pressody_part_template/g, // Prefixes
+			/'pressody_part_template/g, // Prefixes
 		],
 		to: [
 			` * Version: ${argv.version}`,
@@ -160,16 +160,16 @@ function initialise() {
 	}
 	// Replace also the URLs if we've been given a GitHub repo url (without the .git part).
 	if (argv.githubURL) {
-		options.from.push(/https:\/\/github.com\/pixelgradelt\/pixelgradelt-part-template/g)
+		options.from.push(/https:\/\/github.com\/pressody\/pressody-part-template/g)
 		options.to.push(argv.githubURL)
-		options.from.push(/^ \* GitHub Plugin URI: pixelgradelt\/pixelgradelt-part-template/gm)
+		options.from.push(/^ \* GitHub Plugin URI: pressody\/pressody-part-template/gm)
 		options.to.push(' * GitHub Plugin URI: ' + argv.githubURL.replace(/https:\/\/github.com\//, ''))
 	}
 	console.log('3. Main plugin file replacement results:', replace.sync(options))
 
-	// 4. Rename pixelgradelt-part-template.php
-	if (!dryRun && fs.existsSync('pixelgradelt-part-template.php') ) {
-		fs.rename('pixelgradelt-part-template.php', pluginName + '.php', function (err) {
+	// 4. Rename pressody-part-template.php
+	if (!dryRun && fs.existsSync('pressody-part-template.php') ) {
+		fs.rename('pressody-part-template.php', pluginName + '.php', function (err) {
 			if (err) console.log('ERROR: ' + err);
 		});
 	}
@@ -187,16 +187,16 @@ function initialise() {
 		],
 		from: [
 			/@since .*$/gm,
-			/PixelgradeLT\\PartTemplate/g, // the PHP namespaces
+			/Pressody\\PartTemplate/g, // the PHP namespaces
 			/'0.1.0'/g, // The version
-			/PixelgradeLT Part Template/g,
-			/pixelgradelt-part-template.php/g,
-			/'pixelgradelt-part-template\/pixelgradelt-part-template.php'/g,
-			/'pixelgradelt_part_template'/g, // The text domain
-			/'pixelgradelt_part_template/g, // Prefixes
-			/"pixelgradelt_part_template/g, // Prefixes
-			/'pixelgradelt-part-template/g, // Prefixes
-			/\/pixelgradelt-part-template/g, // Prefixes
+			/Pressody Part Template/g,
+			/pressody-part-template.php/g,
+			/'pressody-part-template\/pressody-part-template.php'/g,
+			/'pressody_part_template'/g, // The text domain
+			/'pressody_part_template/g, // Prefixes
+			/"pressody_part_template/g, // Prefixes
+			/'pressody-part-template/g, // Prefixes
+			/\/pressody-part-template/g, // Prefixes
 		],
 		to: [
 			`@since ${argv.version}`,
@@ -214,7 +214,7 @@ function initialise() {
 	}
 	// Replace also the URLs if we've been given a GitHub repo url (without the .git part).
 	if (argv.githubURL) {
-		options.from.push(/https:\/\/github.com\/pixelgradelt\/pixelgradelt-part-template/g);
+		options.from.push(/https:\/\/github.com\/pressody\/pressody-part-template/g);
 		options.to.push(argv.githubURL);
 	}
 	console.log('5. Rest of the files replacement results:', replace.sync(options));
@@ -223,7 +223,7 @@ function initialise() {
 	if (!dryRun) {
 		const toRemove = [
 			'./composer.lock', // No need to provide lock file.
-			'./languages/pixelgradelt-part-template.pot', // The translation file should be generated on release.
+			'./languages/pressody-part-template.pot', // The translation file should be generated on release.
 		];
 		toRemove.forEach( function( file ) {
 			fsExtra.remove(file, function (err) {
@@ -370,12 +370,12 @@ if ( !!argv.help ) {
 	console.log('');
 	console.log('Here are the arguments you can/should provide:');
 	console.log('');
-	console.log( chalk.blue('--packageName')+'           '+chalk.red('Required. ')+'The full Composer package name for this LT Part. The plugin slug and textdomain will be deduced from this.');
+	console.log( chalk.blue('--packageName')+'           '+chalk.red('Required. ')+'The full Composer package name for this PD Part. The plugin slug and textdomain will be deduced from this.');
 	console.log( chalk.blue('--namespace')+'             '+chalk.red('Required. ')+'The base PHP namespace to use throughout the PHP code.');
 	console.log( chalk.blue('--title')+'                 '+chalk.red('Required. ')+'The plugin name as displayed throughout the WordPress dashboard.');
 	console.log( chalk.blue('--description')+'           '+chalk.red('Required. ')+'The plugin description as displayed throughout the WordPress dashboard and the Composer package description.');
 	console.log( chalk.blue('--version')+'               '+chalk.red('Required. ')+'The starting version of the plugin. Keep it SemVer 2.0 compatible <https://semver.org/>.');
-	console.log( chalk.blue('--githubURL')+'             The GitHub repo URL of this LT Part (without the .git part). Just a simple HTTPS URL.');
+	console.log( chalk.blue('--githubURL')+'             The GitHub repo URL of this PD Part (without the .git part). Just a simple HTTPS URL.');
 	console.log( chalk.blue('--bareBones')+'             Delete most of the files to reach a very bare-bones state. Useful for companion plugins that don\'t do anything because there is no need to.');
 	console.log( chalk.blue('--dryRun')+'                Don\'t do any actual changes, just simulate. Will not run --bareBones, if present, in --dryRun mode.');
 	console.log( chalk.blue('--help')+'                  Display these helpful details.');
@@ -404,7 +404,7 @@ if ( ! dryRun ) {
 			confirm: {
 				// allow yes, no, y, n, YES, NO, Y, N as answer
 				pattern: /^(yes|no|y|n)$/gi,
-				description: 'Do you really want to initialise all the files as for a fresh LT Part? (yes/no)',
+				description: 'Do you really want to initialise all the files as for a fresh PD Part? (yes/no)',
 				message: 'Type yes/no',
 				required: true,
 				default: 'no'
@@ -416,7 +416,7 @@ if ( ! dryRun ) {
 
 		// yes or y typed ? otherwise abort
 		if (c != 'y' && c != 'yes') {
-			console.log('Stopping the LT Part initialisation. Bye bye!');
+			console.log('Stopping the PD Part initialisation. Bye bye!');
 			process.exit(0);
 		}
 

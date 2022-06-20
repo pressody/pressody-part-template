@@ -1,31 +1,31 @@
 <?php
 /**
- * PixelgradeLT Part Template Title
+ * Pressody Part Template Title
  *
- * @package PixelgradeLT
- * @author  Vlad Olaru <vlad@pixelgrade.com>
+ * @package Pressody
+ * @author  Vlad Olaru <vladpotter85@gmail.com>
  * @license GPL-2.0-or-later
  *
  * @wordpress-plugin
- * Plugin Name: PixelgradeLT Part Template Title
- * Plugin URI: https://github.com/pixelgradelt/pixelgradelt-part-template
- * Description: Handles the custom integration for the PixelgradeLT Part.
- * Version: 0.1.0
- * Author: Pixelgrade
- * Author URI: https://pixelgrade.com/
+ * Plugin Name: Pressody Part Template Title
+ * Plugin URI: https://github.com/pressody/pressody-part-template
+ * Description: Handles the custom integration for the Pressody Part.
+ * Version: 0.2.0
+ * Author: Pressody
+ * Author URI: https://getpressody.com/
  * License: GPL-2.0-or-later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: pixelgradelt_part_template
+ * Text Domain: pressody_part_template
  * Domain Path: /languages
  * Requires PHP: 7.4
  * Network: false
- * GitHub Plugin URI: pixelgradelt/pixelgradelt-part-template
+ * GitHub Plugin URI: pressody/pressody-part-template
  * Release Asset: true
  */
 
 declare ( strict_types=1 );
 
-namespace PixelgradeLT\PartTemplate;
+namespace Pressody\PartTemplate;
 
 // Exit if accessed directly.
 if ( ! \defined( 'ABSPATH' ) ) {
@@ -62,19 +62,19 @@ spl_autoload_register( __NAMESPACE__ . '\autoloader_classmap' );
 require_once ABSPATH . 'wp-admin/includes/plugin.php';
 
 // Create a container and register a service provider.
-$pixelgradelt_part_template_container = new Container();
-$pixelgradelt_part_template_container->register( new ServiceProvider() );
+$pressody_part_template_container = new Container();
+$pressody_part_template_container->register( new ServiceProvider() );
 
 // Initialize the plugin and inject the container.
-$pixelgradelt_part_template = plugin()
+$pressody_part_template = plugin()
 	->set_basename( plugin_basename( __FILE__ ) )
 	->set_directory( plugin_dir_path( __FILE__ ) )
-	->set_file( __DIR__ . '/pixelgradelt-part-template.php' )
-	->set_slug( 'pixelgradelt-part-template' )
+	->set_file( __DIR__ . '/pressody-part-template.php' )
+	->set_slug( 'pressody-part-template' )
 	->set_url( plugin_dir_url( __FILE__ ) )
 	->define_constants()
-	->set_container( $pixelgradelt_part_template_container )
-	->register_hooks( $pixelgradelt_part_template_container->get( 'hooks.activation' ) )
-	->register_hooks( $pixelgradelt_part_template_container->get( 'hooks.deactivation' ) );
+	->set_container( $pressody_part_template_container )
+	->register_hooks( $pressody_part_template_container->get( 'hooks.activation' ) )
+	->register_hooks( $pressody_part_template_container->get( 'hooks.deactivation' ) );
 
-add_action( 'plugins_loaded', [ $pixelgradelt_part_template, 'compose' ], 5 );
+add_action( 'plugins_loaded', [ $pressody_part_template, 'compose' ], 5 );

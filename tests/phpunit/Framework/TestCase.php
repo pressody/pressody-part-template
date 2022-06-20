@@ -1,5 +1,5 @@
 <?php
-namespace PixelgradeLT\PartTemplate\Tests\Framework;
+namespace Pressody\PartTemplate\Tests\Framework;
 
 class TestCase extends \PHPUnit\Framework\TestCase {
 	public function setUp() {

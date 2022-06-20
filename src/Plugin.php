@@ -4,12 +4,12 @@
  *
  * @since   0.1.0
  * @license GPL-2.0-or-later
- * @package PixelgradeLT
+ * @package Pressody
  */
 
 declare ( strict_types=1 );
 
-namespace PixelgradeLT\PartTemplate;
+namespace Pressody\PartTemplate;
 
 use Cedaro\WP\Plugin\Plugin as BasePlugin;
 use Psr\Container\ContainerInterface;
@@ -29,14 +29,14 @@ class Plugin extends BasePlugin implements Composable {
 		$container = $this->get_container();
 
 		/**
-		 * Start composing the object graph in PixelgradeLT Part Template.
+		 * Start composing the object graph in Pressody Part Template.
 		 *
 		 * @since 0.1.0
 		 *
 		 * @param Plugin             $plugin    Main plugin instance.
 		 * @param ContainerInterface $container Dependency container.
 		 */
-		do_action( 'pixelgradelt_part_template/compose', $this, $container );
+		do_action( 'pressody_part_template/compose', $this, $container );
 
 		// Register hook providers.
 		$this
@@ -50,21 +50,21 @@ class Plugin extends BasePlugin implements Composable {
 		}
 
 		/**
-		 * Finished composing the object graph in PixelgradeLT Part Template.
+		 * Finished composing the object graph in Pressody Part Template.
 		 *
 		 * @since 0.1.0
 		 *
 		 * @param Plugin             $plugin    Main plugin instance.
 		 * @param ContainerInterface $container Dependency container.
 		 */
-		do_action( 'pixelgradelt_part_template/composed', $this, $container );
+		do_action( 'pressody_part_template/composed', $this, $container );
 	}
 
 	public function define_constants(): Plugin {
 		$upload_dir = wp_upload_dir( null, false );
 
-		if ( ! defined( 'PixelgradeLT\PartTemplate\LOG_DIR' ) ) {
-			define( 'PixelgradeLT\PartTemplate\LOG_DIR', $upload_dir['basedir'] . '/pixelgradelt-part-template-logs/' );
+		if ( ! defined( 'Pressody\PartTemplate\LOG_DIR' ) ) {
+			define( 'Pressody\PartTemplate\LOG_DIR', $upload_dir['basedir'] . '/pressody-part-template-logs/' );
 		}
 
 		return $this;

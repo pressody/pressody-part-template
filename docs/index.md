@@ -1,6 +1,6 @@
-# PixelgradeLT Part Template Documentation
+# Pressody Part Template Documentation
 
-Handle the custom logic needed for a LT Part.
+Handle the custom logic needed for a Pressody (PD) Part.
 
 ## Table of Contents
 

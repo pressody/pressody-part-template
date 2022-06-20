@@ -4,12 +4,12 @@
  *
  * @since   0.1.0
  * @license GPL-2.0-or-later
- * @package PixelgradeLT
+ * @package Pressody
  */
 
 declare ( strict_types=1 );
 
-namespace PixelgradeLT\PartTemplate;
+namespace Pressody\PartTemplate;
 
 /**
  * Retrieve the main plugin instance.
@@ -70,12 +70,12 @@ function generate_random_string( int $length = 12 ): string {
 function display_missing_dependencies_notice() {
 	$message = sprintf(
 	/* translators: %s: documentation URL */
-		__( 'PixelgradeLT Part Template is missing required dependencies. <a href="%s" target="_blank" rel="noopener noreferer">Learn more.</a>', 'pixelgradelt_part_template' ),
-		'https://github.com/pixelgradelt/pixelgradelt-part-template/blob/master/docs/installation.md'
+		__( 'Pressody Part Template is missing required dependencies. <a href="%s" target="_blank" rel="noopener noreferer">Learn more.</a>', 'pressody_part_template' ),
+		'https://github.com/pressody/pressody-part-template/blob/master/docs/installation.md'
 	);
 
 	printf(
-		'<div class="pixelgradelt_part_template-compatibility-notice notice notice-error"><p>%s</p></div>',
+		'<div class="pressody_part_template-compatibility-notice notice notice-error"><p>%s</p></div>',
 		wp_kses(
 			$message,
 			[
@@ -120,7 +120,7 @@ function is_rest_request() {
 	$rest_prefix         = trailingslashit( rest_get_url_prefix() );
 	$is_rest_api_request = ( false !== strpos( $_SERVER['REQUEST_URI'], $rest_prefix ) ); // phpcs:disable WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
-	return apply_filters( 'pixelgradelt_part_template/is_rest_api_request', $is_rest_api_request );
+	return apply_filters( 'pressody_part_template/is_rest_api_request', $is_rest_api_request );
 }
 
 /**
@@ -131,7 +131,7 @@ function is_rest_request() {
  * @return bool
  */
 function is_running_unit_tests(): bool {
-	return \defined( 'PixelgradeLT\PartTemplate\RUNNING_UNIT_TESTS' ) && true === RUNNING_UNIT_TESTS;
+	return \defined( 'Pressody\PartTemplate\RUNNING_UNIT_TESTS' ) && true === RUNNING_UNIT_TESTS;
 }
 
 /**

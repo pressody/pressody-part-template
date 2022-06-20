@@ -1,32 +1,32 @@
-# PixelgradeLT Part Template
+# Pressody Part Template
 
-Starter WP plugin template for the code attached to LT Parts (companion LT Part plugin).
+Starter WP plugin template for the code attached to Pressody (PD) Parts (companion PD Part plugin).
 
 ## About
 
-Use this as your starting point for coding the integration of an LT Part (managed by LT Records).
+Use this as your starting point for coding the integration of an PD Part (managed by PD Records).
 
-## Developing a new PixelgradeLT Part plugin
+## Developing a new Pressody Part plugin
 
-If you know what you are doing you can go any number of ways towards developing a companion LT Part plugin, even ignoring this template and starting fresh. But lets tackle the case when you want to stick to this template.
+If you know what you are doing you can go any number of ways towards developing a companion PD Part plugin, even ignoring this template and starting fresh. But lets tackle the case when you want to stick to this template.
 
 This template's intention is to **speed up development and make it more error-proof.** By providing **a set of patterns** (like Dependency Injection, Loggers and Log Handlers, etc.), this template ensures you can easily and confidently bolt things together and have your logic behave predictably.
 
 ### Step 0 - Decide
 
 Before tackling repos and files, **you need to make some decisions:**
-1. **Decide on your LT Part Composer package name** as this will determine things like plugin directory, main file name, textdomain, etc. Usually you would use the `pixelgradelt-records` vendor and a LT part name prefixed with `part_` (e.g. a package name would look like this `pixelgradelt-records/part_woocommerce`).
-2. **Decide on the PHP base namespace to use.** We _strongly recommend_ you use a namespace like this `PixelgradeLT\PartWoocommerce` with `PixelgradeLT` as the root (with the exact lowercase and uppercase).
-3. Finally, decide on a LT Part title, description, and what version you want to start from (e.g. `0.0.1` or `1.0.0`).
+1. **Decide on your PD Part Composer package name** as this will determine things like plugin directory, main file name, textdomain, etc. Usually you would use the `pressody-records` vendor and a PD part name prefixed with `part_` (e.g. a package name would look like this `pressody-records/part_woocommerce`).
+2. **Decide on the PHP base namespace to use.** We _strongly recommend_ you use a namespace like this `Pressody\PartWoocommerce` with `Pressody` as the root (with the exact lowercase and uppercase).
+3. Finally, decide on a PD Part title, description, and what version you want to start from (e.g. `0.0.1` or `1.0.0`).
 
 ### Step 1 - Create a new GitHub repo
 
-Each LT Part companion plugin should reside in **a separate Git repo,** most likely hosted on GitHub.com. 
+Each PD Part companion plugin should reside in **a separate Git repo,** most likely hosted on GitHub.com. 
 
 **The hard way** would be to:
 - create a new, empty GitHub repo yourself
 - open a terminal window into your development directory
-- clone _this_ repo locally by running `git clone --depth 1 https://github.com/pixelgradelt/pixelgradelt-part-template your-part-name` (replace `your-part-name` with the actual name you intend to use)
+- clone _this_ repo locally by running `git clone --depth 1 https://github.com/pressody/pressody-part-template your-part-name` (replace `your-part-name` with the actual name you intend to use)
 - `cd` into the newly created directory (`your-part-name`)
 - change the remote URL to your new, empty GitHub repo by running `git remote set-url origin https://github.com/USERNAME/REPOSITORY.git` and verify the change with `git remote -v`
 - finally, push your "changes" to the GitHub repo by running `git push origin`.
@@ -37,11 +37,11 @@ Each LT Part companion plugin should reside in **a separate Git repo,** most lik
 
 After that, **clone the new GitHub repo locally** by running `git clone https://github.com/USERNAME/REPOSITORY.git your-part-name`.
 
-Now you can start setting up your LT Part companion plugin, clean-up, and develop the specific logic.
+Now you can start setting up your PD Part companion plugin, clean-up, and develop the specific logic.
 
-### Step 2 - Set up your PixelgradeLT Part plugin
+### Step 2 - Set up your Pressody Part plugin
 
-Now that you have the files as provided by the template, it is time to adapt them to your new LT Part. Again, there is a hard way and an easy way.
+Now that you have the files as provided by the template, it is time to adapt them to your new PD Part. Again, there is a hard way and an easy way.
 
 **The hard way** would be to:
 - go through each file and replace things like textdomain, PHP namespaces, versions, etc.
@@ -56,9 +56,9 @@ Now that you have the files as provided by the template, it is time to adapt the
 For extra help, here is a full command to start from:
 ```shell
 ./bin/init \
-	--packageName="pixelgradelt-records/part_woocommerce" \
-	--title="PixelgradeLT Part WooCommerce" \
-	--namespace="PixelgradeLT\PartWoocommerce" \
+	--packageName="pressody-records/part_woocommerce" \
+	--title="Pressody Part WooCommerce" \
+	--namespace="Pressody\PartWoocommerce" \
 	--description="This is a description." \
 	--version="0.5.0" \
 	--githubURL="https://github.com/ohoo/part-woocommerce" \
@@ -68,7 +68,7 @@ You should **keep the quotes** on arguments values to save you from the need to 
 
 Please note that the initialisation script can\'t decide for you. It just does the monkey-work in a thorough way. _You_ should cleanup this `README.md` of these instructions, decide what you want to keep in `/docs`, etc.
 
-If you are after **a bare-bones LT Part companion plugin** (one that does nothing), just add the `--bareBones` argument to the command above.
+If you are after **a bare-bones PD Part companion plugin** (one that does nothing), just add the `--bareBones` argument to the command above.
 
 ## Development
 

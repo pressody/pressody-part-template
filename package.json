@@ -1,21 +1,21 @@
 {
-	"name": "pixelgradelt-part-template",
-	"version": "0.1.0",
-	"description": "Starter WP plugin template for the code attached to LT Parts.",
+	"name": "pressody-part-template",
+	"version": "0.2.0",
+	"description": "Starter WP plugin template for the code attached to Pressody (PD) Parts.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/pixelgradelt/pixelgradelt-part-template.git"
+		"url": "https://github.com/pressody/pressody-part-template.git"
 	},
 	"author": {
 		"name": "Vlad Olaru",
-		"email": "vlad@pixelgrade.com",
-		"url": "https://pixelgrade.com/"
+		"email": "vladpotter85@gmail.com",
+		"url": "https://thinkwritecode.com/"
 	},
 	"license": "GPL-2.0+",
 	"bugs": {
-		"url": "https://github.com/pixelgradelt/pixelgradelt-part-template/issues"
+		"url": "https://github.com/pressody/pressody-part-template/issues"
 	},
-	"homepage": "https://github.com/pixelgradelt/pixelgradelt-part-template",
+	"homepage": "https://github.com/pressody/pressody-part-template",
 	"devDependencies": {
 		"archiver": "^5.2.0",
 		"chalk": "^4.1",
@@ -27,7 +27,7 @@
 	},
 	"scripts": {},
 	"distFiles": [
-		"pixelgradelt-part-template.php",
+		"pressody-part-template.php",
 		"README.md",
 		"{assets,languages,src,views}/**",
 		"vendor/autoload.php",

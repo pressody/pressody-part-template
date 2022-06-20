@@ -4,21 +4,21 @@
  *
  * @since   0.1.0
  * @license GPL-2.0-or-later
- * @package PixelgradeLT
+ * @package Pressody
  */
 
 declare ( strict_types=1 );
 
-namespace PixelgradeLT\PartTemplate;
+namespace Pressody\PartTemplate;
 
 use Cedaro\WP\Plugin\Provider\I18n;
 use Pimple\Container as PimpleContainer;
 use Pimple\ServiceProviderInterface;
-use PixelgradeLT\PartTemplate\Logging\Handler\FileLogHandler;
-use PixelgradeLT\PartTemplate\Logging\Logger;
-use PixelgradeLT\PartTemplate\Logging\LogsManager;
+use Pressody\PartTemplate\Logging\Handler\FileLogHandler;
+use Pressody\PartTemplate\Logging\Logger;
+use Pressody\PartTemplate\Logging\LogsManager;
 use Psr\Log\LogLevel;
-use PixelgradeLT\PartTemplate\Provider;
+use Pressody\PartTemplate\Provider;
 
 /**
  * Plugin service provider class.

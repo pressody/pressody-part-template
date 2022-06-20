@@ -1,6 +1,6 @@
 # Settings
 
-At _Settings &rarr; PixelgradeLT Part Template_, you'll find the settings page:
+At _Settings &rarr; Pressody Part Template_, you'll find the settings page:
 
 ...
 

@@ -1,28 +1,27 @@
 {
-	"name": "pixelgradelt/pixelgradelt-part-template",
-    "version": "0.1.0",
-	"description": "Starter WP plugin template for the code attached to LT Parts.",
+	"name": "pressody/pressody-part-template",
+    "version": "0.2.0",
+	"description": "Starter WP plugin template for the code attached to Pressody (PD) Parts.",
 	"keywords": [
-		"pixelgradelt",
-		"pixelgrade",
-		"pixelgradelt-parts",
+		"pressody",
+		"pressody-parts",
 		"integration",
 		"wordpress",
 		"composer"
 	],
 	"type": "wordpress-plugin",
-	"homepage": "https://github.com/pixelgradelt/pixelgradelt-part-template",
+	"homepage": "https://github.com/pressody/pressody-part-template",
 	"license": "GPL-2.0-or-later",
 	"authors": [
 		{
 		  "name": "Vlad Olaru",
-		  "email": "vlad@pixelgrade.com",
-		  "homepage": "https://pixelgrade.com/"
+		  "email": "vladpotter85@gmail.com",
+		  "homepage": "https://thinkwritecode.com/"
 		}
 	],
 	"support": {
-		"issues": "https://github.com/pixelgradelt/pixelgradelt-part-template/issues",
-		"source": "https://github.com/pixelgradelt/pixelgradelt-part-template"
+		"issues": "https://github.com/pressody/pressody-part-template/issues",
+		"source": "https://github.com/pressody/pressody-part-template"
 	},
 	"config": {
 	  	"optimize-autoloader": true,
@@ -61,7 +60,7 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"PixelgradeLT\\PartTemplate\\": "src/"
+			"Pressody\\PartTemplate\\": "src/"
 		},
 		"files": [
 			"src/functions.php"
@@ -69,7 +68,7 @@
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"PixelgradeLT\\PartTemplate\\Tests\\": "tests/phpunit/"
+			"Pressody\\PartTemplate\\Tests\\": "tests/phpunit/"
 		},
 		"files": [
 
@@ -83,7 +82,7 @@
 		"tests": "./vendor/bin/phpunit --colors=always",
 		"tests-unit": "./vendor/bin/phpunit --testsuite=Unit --colors=always",
 		"tests-integration": "./vendor/bin/phpunit --testsuite=Integration --colors=always",
-		"makepot": "./vendor/bin/wp i18n make-pot . languages/pixelgradelt-part-template.pot",
+		"makepot": "./vendor/bin/wp i18n make-pot . languages/pressody-part-template.pot",
 		"prepare-for-release": [
 		  "composer install",
 		  "composer makepot",
